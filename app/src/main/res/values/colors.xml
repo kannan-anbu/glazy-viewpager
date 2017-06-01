@@ -20,4 +20,8 @@
     <color name="bluegrass">#ff96c9b5</color>
     <color name="turquoise">#ff86b9b5</color>
     <color name="slate">#ff76a9b5</color>
+
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#22000000</color>
+    <color name="colorAccent">#000000</color>
 </resources>
