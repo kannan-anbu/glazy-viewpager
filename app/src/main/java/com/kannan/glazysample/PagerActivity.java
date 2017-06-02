@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.kannan.glazy.GlazyCard;
 import com.kannan.glazy.Utils;
 import com.kannan.glazy.pager.GlazyFragmentPagerAdapter;
-import com.kannan.glazy.transformers.*;
+import com.kannan.glazy.transformers.GlazyPagerTransformer;
 import com.kannan.glazy.views.GlazyImageView.ImageCutType;
 
 public class PagerActivity extends AppCompatActivity {
@@ -26,7 +26,7 @@ public class PagerActivity extends AppCompatActivity {
         mPagerAdapter = new GlazyFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext());
         int imageResId = getApplicationContext().getResources().getIdentifier("matt_le_blanc", "drawable", getPackageName());
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             GlazyCard card = new GlazyCard("Title text",
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do" +
                             " eiusmod tempor incididunt ut labore et dolore magna aliqua." +
@@ -36,7 +36,7 @@ public class PagerActivity extends AppCompatActivity {
                             "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat" +
                             " non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                     imageResId);
-            card.withImageCutType(ImageCutType.LINE)
+            card.withImageCutType(ImageCutType.ARC)
                     .withImageCutCount(10)
                     .withImageCutAngle(10);
             mPagerAdapter.addCardItem(card);

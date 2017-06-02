@@ -5,9 +5,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,10 +26,13 @@ public class GlazyImageView extends View {
     private int mImageRes = -1;
     private Bitmap mImageBitmap;
     private Paint mBitmapPaint;
+    private Shader mGradientShader;
+    private Paint mGradientPaint;
+    private Paint mCutPaint;
     private Path mPath;
 
-    private int mHeight;
-    private int mWidth;
+    private float mHeight;
+    private float mWidth;
 
     private ImageCutType mCutType;
     private int mCutangle;
@@ -82,8 +87,17 @@ public class GlazyImageView extends View {
 //            }
 //        }
 
+        setLayerType(LAYER_TYPE_NONE, null);
+
         mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBitmapPaint.setStyle(Paint.Style.FILL);
+
+        mGradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mGradientPaint.setStyle(Paint.Style.FILL);
+
+        mCutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCutPaint.setStyle(Paint.Style.FILL);
+
         mBitmapScaleRect = new RectF();
         mPath = new Path();
         mCloseFactor = 0f;
@@ -108,11 +122,36 @@ public class GlazyImageView extends View {
         if (mImageRes != -1) {
 //             mCoverPaint.setShader(new BitmapShader(mImageBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT));
 //
-            canvas.clipPath(mPath);
+            Path path = Utils.getPath(mWidth, mHeight - 25, mCutType, mCutangle - 6, mCloseFactor);
+//            canvas.drawPath(path, mCutPaint);
+            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 1.5f, mCloseFactor);
+            canvas.drawPath(path, mCutPaint);
+            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 3f, mCloseFactor);
+            canvas.drawPath(path, mCutPaint);
+
 //            canvas.drawBitmap(mImageBitmap, 0, 0, mBitmapPaint);
 //
             canvas.clipRect(mBitmapScaleRect);
+            canvas.clipPath(mPath);
             canvas.drawBitmap(mImageBitmap, null, mBitmapScaleRect, mBitmapPaint);
+
+
+//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle + 1.5f, mCloseFactor);
+//            canvas.clipPath(path);
+//            canvas.drawPaint(mGradientPaint);
+////            canvas.drawPath(mPath, mGradientPaint);
+////            canvas.drawPath(path, mCutPaint);
+//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle + 3f, mCloseFactor);
+//            canvas.clipPath(path);
+//            canvas.drawPaint(mGradientPaint);
+////            canvas.drawPath(mPath, mGradientPaint);
+////            canvas.drawPath(path, mCutPaint);
+
+
+            canvas.drawPath(mPath, mGradientPaint);
+
+
+
 //        canvas.drawPath(mCoverPath, mCoverPaint);
         }
     }
@@ -151,6 +190,14 @@ public class GlazyImageView extends View {
             if (y > 0) y = -y;
 
             mBitmapScaleRect.set(x, y, x + requiredWidth, y + requiredHeight);
+            Log.i("app", requiredWidth + " " + requiredHeight + "\n" + mBitmapScaleRect.toString());
+
+
+            mGradientShader = Utils.getLinearGradient(
+                    mWidth, mHeight, Color.parseColor("#00000000"), Color.parseColor("#9a000000"));
+            mGradientPaint.setShader(mGradientShader);
+
+            mCutPaint.setColor(Color.parseColor("#55000000"));
 //
 //            bitmap = squareCropBitmap(bitmap);
 //            Log.i("app", "crop " + bitmap.getWidth() + " " + bitmap.getHeight());
@@ -175,7 +222,7 @@ public class GlazyImageView extends View {
     }
 
     public static Bitmap decodeSampledBitmapFromResource(
-            Resources res, int resId, int reqWidth, int reqHeight) {
+            Resources res, int resId, float reqWidth, float reqHeight) {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -188,7 +235,7 @@ public class GlazyImageView extends View {
     }
 
     public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            BitmapFactory.Options options, float reqWidth, float reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -214,7 +261,7 @@ public class GlazyImageView extends View {
 
     public void setImageRes(int imgRes) {
         mImageRes = imgRes;
-        requestLayout();
+//        requestLayout();
     }
 
     public void setCutType(ImageCutType cutType) {
