@@ -95,7 +95,7 @@ public class GlazyImageView extends View {
 //            }
 //        }
 
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
+        setLayerType(LAYER_TYPE_NONE, null);
 
         mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBitmapPaint.setStyle(Paint.Style.FILL);
