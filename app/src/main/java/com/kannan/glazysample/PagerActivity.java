@@ -26,24 +26,43 @@ public class PagerActivity extends AppCompatActivity {
         mPagerAdapter = new GlazyFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext());
         int imageResId = getApplicationContext().getResources().getIdentifier("matt_le_blanc", "drawable", getPackageName());
 
-        for (int i = 0; i < 10; i++) {
-            GlazyCard card = new GlazyCard("Title text",
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do" +
-                            " eiusmod tempor incididunt ut labore et dolore magna aliqua." +
-                            " Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
-                            " laboris nisi ut aliquip ex ea commodo consequat. Duis aute" +
-                            " irure dolor in reprehenderit in voluptate velit esse cillum " +
-                            "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat" +
-                            " non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                    imageResId);
-            card.withImageCutType(ImageCutType.ARC)
-                    .withImageCutCount(3)
-                    .withImageCutAngle(10)
-                    .withImageCutHeight(90);
-            mPagerAdapter.addCardItem(card);
+        String title = "Title Text";
+        String desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do" +
+                " eiusmod tempor incididunt ut labore et dolore magna aliqua." +
+                " Ut enim ad minim veniam, quis nostrud exercitation ullamco" +
+                " laboris nisi ut aliquip ex ea commodo consequat. Duis aute" +
+                " irure dolor in reprehenderit in voluptate velit esse cillum " +
+                "dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat" +
+                " non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        for (int i = 0; i < 2; i ++) {
+            mPagerAdapter.addCardItem(
+                    new GlazyCard()
+                            .withTitle(title)
+                            .withDescription(desc)
+                            .withImageRes(imageResId)
+                            .withImageCutType(ImageCutType.WAVE)
+                            .withImageCutCount(4)
+                            .withImageCutHeight(90));
+            mPagerAdapter.addCardItem(
+                    new GlazyCard()
+                            .withTitle(title)
+                            .withDescription(desc)
+                            .withImageRes(imageResId)
+                            .withImageCutType(ImageCutType.LINE)
+                            .withImageCutCount(3)
+                            .withImageCutAngle(10));
+            mPagerAdapter.addCardItem(
+                    new GlazyCard()
+                            .withTitle(title)
+                            .withDescription(desc)
+                            .withImageRes(imageResId)
+                            .withImageCutType(ImageCutType.ARC)
+                            .withImageCutCount(3)
+                            .withImageCutHeight(90));
         }
+
         mPager.setAdapter(mPagerAdapter);
-        mPager.setOffscreenPageLimit(2);
+        mPager.setOffscreenPageLimit(1);
         mPager.setClipToPadding(false);
         mPager.setPageMargin(Utils.dpToPx(15, this));
 

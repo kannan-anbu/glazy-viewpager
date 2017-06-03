@@ -1,13 +1,11 @@
 package com.kannan.glazy.transformers;
 
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.kannan.glazy.views.GlazyImageView;
-
 import com.kannan.glazy.R;
+import com.kannan.glazy.views.GlazyImageView;
 
  public class GlazyPagerTransformer implements ViewPager.PageTransformer {
 
@@ -35,7 +33,7 @@ import com.kannan.glazy.R;
         final float alpha, scale, translationX;
         float position = position1 - 0.13157895f;// - 0.15084746f;
 
-        if(Math.abs(position) <= 1.5) {
+        if(Math.abs(position) <= 1.1) {
 //            TextView tv = (TextView) page.findViewById(R.id.fragment_cardview_title);
 //            tv.setText("" + position);
 
@@ -44,7 +42,7 @@ import com.kannan.glazy.R;
 //            RevealImageView iv = (RevealImageView) page.findViewById(R.id.fragment_cardview_image);
             String t = ((TextView) page.findViewById(R.id.title_text)).getText().toString();
             float f = 1.0f - Math.abs(position);
-            Log.i("app", t +  f );
+//            Log.i("app", t +  f );
             iv.update(f);
 //            page.invalidate();
         }
