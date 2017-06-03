@@ -29,7 +29,7 @@ public class GlazyImageView extends View {
     private Shader mGradientShader;
     private Paint mGradientPaint;
     private Paint mCutPaint;
-    private Path mPath;
+    private Path[] mPaths;
 
     private float mHeight;
     private float mWidth;
@@ -37,6 +37,8 @@ public class GlazyImageView extends View {
     private ImageCutType mCutType;
     private int mCutangle;
     private int mCutCount;
+    private int mCutHeight;
+    private int mCutPhaseShift;
     private float mCloseFactor;
 
     private RectF mBitmapScaleRect;
@@ -87,7 +89,7 @@ public class GlazyImageView extends View {
 //            }
 //        }
 
-        setLayerType(LAYER_TYPE_NONE, null);
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
 
         mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBitmapPaint.setStyle(Paint.Style.FILL);
@@ -99,7 +101,9 @@ public class GlazyImageView extends View {
         mCutPaint.setStyle(Paint.Style.FILL);
 
         mBitmapScaleRect = new RectF();
-        mPath = new Path();
+        mPaths = new Path[1];
+
+        mCutCount = 3;
         mCloseFactor = 0f;
     }
 
@@ -122,17 +126,20 @@ public class GlazyImageView extends View {
         if (mImageRes != -1) {
 //             mCoverPaint.setShader(new BitmapShader(mImageBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT));
 //
-            Path path = Utils.getPath(mWidth, mHeight - 25, mCutType, mCutangle - 6, mCloseFactor);
+//            Path path = Utils.getPath(mWidth, mHeight - 25, mCutType, mCutangle - 6, mCloseFactor);
+////            canvas.drawPath(path, mCutPaint);
+//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 1.5f, mCloseFactor);
 //            canvas.drawPath(path, mCutPaint);
-            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 1.5f, mCloseFactor);
-            canvas.drawPath(path, mCutPaint);
-            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 3f, mCloseFactor);
-            canvas.drawPath(path, mCutPaint);
+//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutangle - 3f, mCloseFactor);
+//            canvas.drawPath(path, mCutPaint);
 
 //            canvas.drawBitmap(mImageBitmap, 0, 0, mBitmapPaint);
 //
+//            mPath.
             canvas.clipRect(mBitmapScaleRect);
-            canvas.clipPath(mPath);
+            try {
+                canvas.clipPath(mPaths[0]);
+            } catch (Exception e) {}
             canvas.drawBitmap(mImageBitmap, null, mBitmapScaleRect, mBitmapPaint);
 
 
@@ -147,8 +154,9 @@ public class GlazyImageView extends View {
 ////            canvas.drawPath(mPath, mGradientPaint);
 ////            canvas.drawPath(path, mCutPaint);
 
-
-            canvas.drawPath(mPath, mGradientPaint);
+            try {
+                canvas.drawPath(mPaths[0], mGradientPaint);
+            } catch (Exception e) {}
 
 
 
@@ -160,7 +168,17 @@ public class GlazyImageView extends View {
     public void update(float factor) {
         if (mCloseFactor != factor) {
             mCloseFactor = factor;
-            mPath = Utils.getPath(mWidth, mHeight, mCutType, mCutangle, mCloseFactor);
+            mPaths = new Path[mCutCount];
+            Toast.makeText(mContext, "" + mPaths.length + mCutCount, Toast.LENGTH_SHORT).show();
+            float angleIncrement = mCutangle / (float) mCutCount;
+            float cutHeightIncrement = mCutHeight / (float) mCutCount;
+            for (int i = 0; i < mCutCount; i += 1) {
+                mPaths[i] = Utils.getPath(
+                        mWidth, mHeight, mCutType, mCutangle - angleIncrement * i,
+                        mCutHeight - cutHeightIncrement * i, mCutPhaseShift, mCloseFactor);
+            }
+//            Toast.makeText(mContext, "" + mPaths.length, Toast.LENGTH_SHORT).show();
+//            mPath = Utils.getPath(mWidth, mHeight, mCutType, mCutangle, mCutHeight, mCutPhaseShift, mCloseFactor);
             postInvalidate();
         }
     }
@@ -279,6 +297,14 @@ public class GlazyImageView extends View {
 
     public void setCutCount(int count) {
         mCutCount = Math.abs(count) % 4;
+    }
+
+    public void setCutHeight(int height) {
+        mCutHeight = height;
+    }
+
+    public void setCutPhaseShift(int phaseShift) {
+        mCutPhaseShift = phaseShift;
     }
 
 }

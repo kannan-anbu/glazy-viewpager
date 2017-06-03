@@ -49,6 +49,8 @@ public class GlazyCardFragment extends Fragment {
         imgView.setCutType(card.getImageCutType());
         imgView.setCutAngle(card.getImageCutAngle());
         imgView.setCutCount(card.getImageCutCount());
+        imgView.setCutHeight(card.getImageCutHeight());
+        imgView.setCutPhaseShift(card.getImageCutPhaseShift());
 //        v.setBackgroundColor(card.getBackgroundColor());
 
         ScrollView textContainer = (ScrollView) v.findViewById(R.id.text_container);

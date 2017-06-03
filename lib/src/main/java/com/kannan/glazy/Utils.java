@@ -11,6 +11,8 @@ import com.kannan.glazy.views.GlazyImageView.ImageCutType;
 
 public class Utils {
 
+
+
     public static int getPixelForDp(Context context, int displayPixels) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, displayPixels, context.getResources().getDisplayMetrics());
     }
@@ -20,7 +22,7 @@ public class Utils {
         return Math.round(dp * (dMat.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
-    public static Path getWavePath(float width, float height, float amplitude, float shift, float divide) {
+    public static Path getWavePath1(float width, float height, float amplitude, float shift, float divide) {
         Path path = new Path();
         float quadrant = height - amplitude;
         float x, y;
@@ -36,7 +38,91 @@ public class Utils {
         return path;
     }
 
+    private static Path getWavePath(
+            float width, float height, float amplitude, float cyclesPerSocond, float phaseShift) {
+        int unitPixels = 15;
+        float heightDiff = height - amplitude;
+
+        Path path = new Path();
+        path.moveTo(0, 0);
+        path.lineTo(0, heightDiff);
+        float x, y;
+        for (int i = 0; i < width + unitPixels; i += unitPixels) {
+            x = i;
+            y = amplitude * (float) Math.sin(
+                    Math.toRadians(2 * Math.PI * cyclesPerSocond * (i + unitPixels)) +
+                            Math.toRadians(phaseShift)
+            );
+            path.lineTo(x, heightDiff + y);
+        }
+        path.lineTo(width, 0);
+        path.close();
+        return path;
+    }
+
+    private static Path getLinePath(
+            float width, float height, float angle, float factor) {
+
+        float cutHeight = Math.abs(
+                ((float) Math.tan(Math.toRadians(angle))) * width
+        );
+        if (cutHeight >= height) {
+            cutHeight = height / 6;
+        }
+
+        float[] x = new float[4];
+        float[] y = new float[4];
+
+        x[0] = 0;
+        y[0] = 0;
+        x[1] = width;
+        y[1] = 0;
+        if (angle < 90) {
+            x[2] = width;
+            y[2] = (height - cutHeight) * factor;
+            x[3] = 0;
+            y[3] = height * factor;
+        } else {
+            x[2] = width;
+            y[2] = height * factor;
+            x[3] = 0;
+            y[3] = (height - cutHeight) * factor;
+        }
+
+        Path path = new Path();
+        path.moveTo(x[0], y[0]);
+        path.lineTo(x[1], y[1]);
+        path.lineTo(x[2], y[2]);
+        path.lineTo(x[3], y[3]);
+        path.close();
+
+        return path;
+    }
+
+//    private static Path getArcPath(
+//            float width, float height, float amplitude, float phaseShift)
+
     public static Path getPath(
+            float width, float height, ImageCutType cutType,
+            float angle, float cutHeight, float phaseShift,
+            float factor) {
+        Path path = new Path();
+        switch (cutType) {
+            case LINE:
+                path = getLinePath(width, height, angle, factor);
+                break;
+            case ARC:
+                path = getWavePath(width, height * factor, cutHeight * factor / 2, 0.05f, phaseShift);
+                break;
+            case WAVE:
+                path = getWavePath(width, height * factor, cutHeight * factor / 2, 0.1f, phaseShift);
+        }
+
+        return path;
+    }
+
+
+    public static Path getPath1(
             float width, float height, ImageCutType cutType, float angle, float factor) {
         float[] x = new float[4];
         float[] y = new float[4];
@@ -111,7 +197,8 @@ public class Utils {
                 break;
 
             case WAVE :
-                path = getWavePath(width, height*factor, heightDiff*factor/2, -0.3f, 2);
+//                path = getWavePath(width, height*factor, heightDiff*factor/2, -0.3f, 2);
+//                path = getWave(width, height * factor, heightDiff * factor / 2, 0.1f, -20);
                 break;
         }
 

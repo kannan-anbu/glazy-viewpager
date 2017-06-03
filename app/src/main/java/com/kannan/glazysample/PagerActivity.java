@@ -37,8 +37,9 @@ public class PagerActivity extends AppCompatActivity {
                             " non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                     imageResId);
             card.withImageCutType(ImageCutType.ARC)
-                    .withImageCutCount(10)
-                    .withImageCutAngle(10);
+                    .withImageCutCount(3)
+                    .withImageCutAngle(10)
+                    .withImageCutHeight(90);
             mPagerAdapter.addCardItem(card);
         }
         mPager.setAdapter(mPagerAdapter);

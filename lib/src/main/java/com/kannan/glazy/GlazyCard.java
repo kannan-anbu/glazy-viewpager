@@ -2,9 +2,9 @@ package com.kannan.glazy;
 
 import android.graphics.Color;
 
-import java.io.Serializable;
-
 import com.kannan.glazy.views.GlazyImageView.ImageCutType;
+
+import java.io.Serializable;
 
 public class GlazyCard implements Serializable{
 
@@ -15,6 +15,8 @@ public class GlazyCard implements Serializable{
     private ImageCutType mImageCutType;
     private int mImageCutAngle;
     private int mImageCutCount;
+    private int mImageCutHeight;
+    private int mImageCutPhaseShift;
 
     private boolean mAutoTint;
     private int mTintColor;
@@ -29,6 +31,8 @@ public class GlazyCard implements Serializable{
         mImageCutType = ImageCutType.LINE;
         mImageCutAngle = 20;
         mImageCutCount = 2;
+        mImageCutHeight = 0;
+        mImageCutPhaseShift = 0;
         mAutoTint = true;
         mBackgroundColor = Color.parseColor("#FFEFD4");
         mHasImageSource = false;
@@ -118,6 +122,16 @@ public class GlazyCard implements Serializable{
         return this;
     }
 
+    public GlazyCard withImageCutHeight(int height) {
+        mImageCutHeight = height;
+        return this;
+    }
+
+    public GlazyCard withImageCutPhaseShift(int phaseShift) {
+        mImageCutPhaseShift = phaseShift;
+        return this;
+    }
+
     public GlazyCard withBackgroundColor(int bgColor) {
         mBackgroundColor = bgColor;
         return this;
@@ -169,6 +183,14 @@ public class GlazyCard implements Serializable{
 
     public int getImageCutCount() {
         return mImageCutCount;
+    }
+
+    public int getImageCutHeight() {
+        return mImageCutHeight;
+    }
+
+    public int getImageCutPhaseShift() {
+        return mImageCutPhaseShift;
     }
 
     public boolean hasImageSource() {
