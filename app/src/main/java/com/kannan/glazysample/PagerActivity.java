@@ -92,3 +92,11 @@ public class PagerActivity extends AppCompatActivity {
     }
 
 }
+
+
+
+
+//    compile 'com.android.support:design:25.1.0'
+//            compile 'com.android.support:recyclerview-v7:25.1.0'
+//            compile 'com.android.support:cardview-v7:25.1.0'
+//            compile 'com.github.bumptech.glide:glide:3.6.1'

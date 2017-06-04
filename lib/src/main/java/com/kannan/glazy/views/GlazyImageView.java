@@ -12,9 +12,10 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.media.ThumbnailUtils;
+import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.kannan.glazy.Utils;
 
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 
 
 public class GlazyImageView extends View {
+
+    private String TAG = "glazy"; //GlazyImageView.class.getSimpleName();
 
     private Context mContext;
 
@@ -35,6 +38,9 @@ public class GlazyImageView extends View {
     private ArrayList<Path> mPathsScaled;
     private Matrix mScaleMatrix;
 
+    private boolean mAutoTint;
+    private int mTintColor;
+
     private float mHeight;
     private float mWidth;
 
@@ -45,6 +51,7 @@ public class GlazyImageView extends View {
     private int mCutPhaseShift;
     private float mOpenFactor;
 
+    private RectF mBitmapScaleRectOriginal;
     private RectF mBitmapScaleRect;
 
     private boolean flag = false;
@@ -106,10 +113,13 @@ public class GlazyImageView extends View {
         mCutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mCutPaint.setStyle(Paint.Style.FILL);
 
-        mBitmapScaleRect = new RectF();
+        mBitmapScaleRectOriginal = new RectF();
         mPathsFull = new ArrayList<>();
         mPathsScaled = new ArrayList<>();
         mScaleMatrix = new Matrix();
+
+        mAutoTint = false;
+        mTintColor = Color.parseColor("#cc000000");
 
         mCutCount = 3;
         mCutAngle = 10;
@@ -123,14 +133,14 @@ public class GlazyImageView extends View {
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
 
-//        Log.i("app", "onMeasure" + flag);
+        Log.i(TAG, "onMeasure");
         prepareDrawingElements();
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-//        Log.i("app", "layout");
+        Log.i(TAG, "layout");
 //        update(mOpenFactor);
     }
 
@@ -138,80 +148,21 @@ public class GlazyImageView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mImageRes != -1 && mImageBitmap != null) {
-//            Log.i("app", "onDraw");
-//             mCoverPaint.setShader(new BitmapShader(mImageBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT));
-//
-//            Path path = Utils.getPath(mWidth, mHeight - 25, mCutType, mCutAngle - 6, mOpenFactor);
-////            canvas.drawPath(path, mCutPaint);
-//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutAngle - 1.5f, mOpenFactor);
-//            canvas.drawPath(path, mCutPaint);
-//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutAngle - 3f, mOpenFactor);
-//            canvas.drawPath(path, mCutPaint);
-
-//            canvas.drawBitmap(mImageBitmap, 0, 0, mBitmapPaint);
-//
             for (int i = 1; i < mPathsScaled.size(); i++) {
-//            try {
                 canvas.drawPath(mPathsScaled.get(i), mCutPaint);
-//            } catch (Exception e) {}
             }
-//            mPath.
             if (mPathsScaled.size() > 0) {
-//                canvas.clipRect(mBitmapScaleRect);
-//                RectF bound = new RectF();
-//                mPathsScaled.get(0).computeBounds(bound, true);
-//                Log.i("app", bound.toString());
-////            try {
                 canvas.clipPath(mPathsScaled.get(0));
-////            } catch (Exception e) {}
                 canvas.drawBitmap(mImageBitmap, null, mBitmapScaleRect, mBitmapPaint);
+//                canvas.clipRect(mBitmapScaleRect);
                 canvas.drawPath(mPathsScaled.get(0), mGradientPaint);
-//                canvas.drawPath
+//                canvas.drawPaint(mGradientPaint);
             }
-
-//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutAngle + 1.5f, mOpenFactor);
-//            canvas.clipPath(path);
-//            canvas.drawPaint(mGradientPaint);
-////            canvas.drawPath(mPath, mGradientPaint);
-////            canvas.drawPath(path, mCutPaint);
-//            path = Utils.getPath(mWidth, mHeight, mCutType, mCutAngle + 3f, mOpenFactor);
-//            canvas.clipPath(path);
-//            canvas.drawPaint(mGradientPaint);
-////            canvas.drawPath(mPath, mGradientPaint);
-////            canvas.drawPath(path, mCutPaint);
-
-
-
-
-//        canvas.drawPath(mCoverPath, mCoverPaint);
         }
     }
 
-    private void prepareDrawingElements() {
-        if (mWidth != 0 && mHeight != 0) {
-            prepareBitmap();
-            createPaths();
-        }
-    }
-
-    private void createPaths() {
-//        Log.i("app", "createPaths" + mWidth + " " + mHeight + " " + mOpenFactor);
-        mPathsFull.clear();
-        float angleIncrement = mCutAngle / ((float) 1.5 * mCutCount);
-        float cutHeightIncrement = mCutHeight / ((float) 1.5 * mCutCount);
-        for (int i = 0; i < mCutCount; i += 1) {
-            mPathsFull.add( Utils.getPath(
-                    mWidth, mHeight, mCutType, mCutAngle - angleIncrement * i,
-                    mCutHeight - cutHeightIncrement * i, mCutPhaseShift, 1f)
-            );
-//
-//            RectF bound = new RectF();
-//            mPathsFull.get(0).computeBounds(bound, true);
-//            Log.i("app", bound.toString());
-        }
-    }
     public void update(float factor) {
-//        Log.i("app", "update");
+//        Log.i(TAG, "update");
         mOpenFactor = factor;
         mScaleMatrix.setScale(1f, factor);
         mPathsScaled.clear();
@@ -220,65 +171,126 @@ public class GlazyImageView extends View {
             mPathsFull.get(i).transform(mScaleMatrix, path);
             mPathsScaled.add(i, path);
         }
-//        Log.i("app", "" + mPathsFull.size() + mPathsScaled.size());
+
+        mBitmapScaleRect = new RectF(mBitmapScaleRectOriginal);
+        mBitmapScaleRect.offsetTo(
+                mBitmapScaleRectOriginal.left,
+                mBitmapScaleRectOriginal.top - (mBitmapScaleRectOriginal.height() / 2 * (1 - mOpenFactor))
+        );
+
+        RectF bound = new RectF();
+        mPathsFull.get(0).computeBounds(bound, true);
+//        mPathsScaled.get(0).offset(0, - Math.abs(mBitmapScaleRectOriginal.top - mBitmapScaleRect.top));
+//        mPathsScaled.get(0).offset(0, -(bound.height() / 2 * (1 - mOpenFactor)));
+        mGradientShader = Utils.getLinearGradient(mWidth, bound.height(), Color.parseColor("#00000000"), mTintColor);
+        mGradientPaint.setColor(Color.BLACK);
+//        mGradientPaint.setShader(mGradientShader);
+        mGradientPaint.setAlpha((int) (255 * (1-mOpenFactor)));
         postInvalidate();
     }
 
+    private void prepareDrawingElements() {
+        if (mWidth != 0 && mHeight != 0) {
+            prepareBitmap();
+            createPaths();
+            prepareTints();
+        }
+    }
+
+    private void createPaths() {
+        Log.i(TAG, "createPaths" + mWidth + " " + mHeight + " " + mOpenFactor);
+        mPathsFull.clear();
+        float angleIncrement = mCutAngle / ((float) 1.5 * mCutCount);
+        float cutHeightIncrement = mCutHeight / ((float) 1.5 * mCutCount);
+
+        switch (mCutType) {
+            case LINE:
+                for (int i = 0; i < mCutCount; i += 1) {
+                    mPathsFull.add(
+                            Utils.getLinePath(
+                                    mWidth,
+                                    mHeight,
+                                    mCutAngle - angleIncrement * i
+                            )
+                    );
+                }
+                break;
+            case ARC:
+                for (int i = 0; i < mCutCount; i += 1) {
+                    mPathsFull.add(
+                            Utils.getWavePath(
+                                    mWidth,
+                                    mHeight,
+                                    mCutHeight - cutHeightIncrement * i,
+                                    0.05f,
+                                    mCutPhaseShift
+                            )
+                    );
+                }
+                break;
+            case WAVE:
+                for (int i = 0; i < mCutCount; i += 1) {
+                    mPathsFull.add(
+                            Utils.getWavePath(
+                                    mWidth,
+                                    mHeight,
+                                    (mCutHeight - cutHeightIncrement * i) / 2,
+                                    0.1f,
+                                    mCutPhaseShift
+                            )
+                    );
+                }
+                break;
+            default:
+                Log.e(TAG, "Unknown ImageCutType enum : " + mCutType + "\n"
+                + "switching to default value : " + "");
+        }
+//            RectF bound = new RectF();
+//            mPathsFull.get(0).computeBounds(bound, true);
+//            Log.i("app", bound.toString());
+
+    }
+
+    private void prepareTints() {
+        if (mAutoTint) {
+            pickColorFromBitmapAsync();
+        }
+        mGradientShader = Utils.getLinearGradient(
+                mWidth, mHeight, Color.parseColor("#00000000"), mTintColor);
+//        mGradientPaint.setShader(mGradientShader);
+        mGradientPaint.setAlpha(255);
+        mCutPaint.setColor(mTintColor);
+        mCutPaint.setAlpha(100);
+    }
 
     private void prepareBitmap() {
-//        Log.i("app", "prepare bitmap");
+        Log.i(TAG, "prepare bitmap");
         if (mImageRes != -1) {
-//            Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), mImageRes);
-            mImageBitmap = decodeSampledBitmapFromResource(mContext.getResources(), mImageRes, mWidth, mHeight);
-            if (mImageBitmap == null ) {
-                Toast.makeText(getContext(), "null bitmap", Toast.LENGTH_SHORT).show();
+            try {
+                mImageBitmap = decodeSampledBitmapFromResource(mContext.getResources(), mImageRes, mWidth, mHeight);
+            } catch(OutOfMemoryError e) {
+                mImageBitmap = null;
+                Log.e(TAG, "Image too large to load: \n" + e.getMessage());
+            } catch(Exception e) {
+                Log.e(TAG, "Could not load bitmap image : \n" + e.getMessage());
             }
-//            Log.i("app", "res " + mImageBitmap.getWidth() + " " + mImageBitmap.getHeight());
 
-
-            float ratioChange = 1;
+//            prepare scaleRect for drawing bitmap
+            float scaleRatio = 1;
             if (mWidth != mImageBitmap.getWidth()) {
-                ratioChange = mWidth / mImageBitmap.getWidth();
+                scaleRatio = mWidth / mImageBitmap.getWidth();
             }
-            if (ratioChange * mImageBitmap.getHeight() < mHeight) {
-                ratioChange = mHeight / mImageBitmap.getHeight();
+            if (scaleRatio * mImageBitmap.getHeight() < mHeight) {
+                scaleRatio = mHeight / mImageBitmap.getHeight();
             }
-            float requiredHeight = mImageBitmap.getHeight() * ratioChange;
-            float requiredWidth = mImageBitmap.getWidth() * ratioChange;
+            float requiredHeight = mImageBitmap.getHeight() * scaleRatio;
+            float requiredWidth = mImageBitmap.getWidth() * scaleRatio;
             int y = (int) ((requiredHeight / 2) - (mHeight / 2));
             int x = (int) ((requiredWidth / 2) - (mWidth / 2));
             if (x > 0) x = -x;
             if (y > 0) y = -y;
 
-            mBitmapScaleRect.set(x, y, x + requiredWidth, y + requiredHeight);
-//            Log.i("app", requiredWidth + " " + requiredHeight + "\n" + mBitmapScaleRect.toString());
-
-
-            mGradientShader = Utils.getLinearGradient(
-                    mWidth, mHeight, Color.parseColor("#00000000"), Color.parseColor("#cc000000"));
-            mGradientPaint.setShader(mGradientShader);
-
-            mCutPaint.setColor(Color.parseColor("#55000000"));
-//
-//            bitmap = squareCropBitmap(bitmap);
-//            Log.i("app", "crop " + bitmap.getWidth() + " " + bitmap.getHeight());
-//
-//            int scaleDimension = Math.max(mWidth, mHeight);
-//            bitmap = Bitmap.createScaledBitmap(bitmap, scaleDimension, scaleDimension, false);
-//            Log.i("app", "scale " + bitmap.getWidth() + " " + bitmap.getHeight());
-//
-//            int x, y;
-//
-//            if (mWidth < bitmap.getWidth()) {
-//                x = (bitmap.getWidth() - mWidth) / 2;
-//                y = 0;
-//            } else {
-//                x = 0;
-//                y = (bitmap.getHeight() - mHeight) / 2;
-//            }
-//            mImageBitmap = Bitmap.createBitmap(bitmap, x, y, mWidth, mHeight);
-//            Log.i("app", "img " + mImageBitmap.getWidth() + " " + mImageBitmap.getHeight() + " "
-//            + mWidth + " " + mHeight);
+            mBitmapScaleRectOriginal.set(x, y, x + requiredWidth, y + requiredHeight);
         }
     }
 
@@ -292,7 +304,7 @@ public class GlazyImageView extends View {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         options.inJustDecodeBounds = false;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
@@ -319,6 +331,47 @@ public class GlazyImageView extends View {
         return ThumbnailUtils.extractThumbnail(
                 bitmap, sideDimension, sideDimension, ThumbnailUtils.OPTIONS_RECYCLE_INPUT
         );
+    }
+
+    private void pickColorFromBitmapAsync() {
+        if (mImageBitmap != null) {
+            Palette.from(mImageBitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    int defaultColor = 0x000000;
+                    if (palette.getDominantColor(defaultColor) != 0) {
+                        mTintColor = Math.abs(palette.getDominantColor(defaultColor));
+                    } else if (palette.getDarkVibrantColor(defaultColor) != 0) {
+                        mTintColor = Math.abs(palette.getDarkVibrantColor(defaultColor));
+                    } else if (palette.getDarkMutedColor(defaultColor) != 0) {
+                        mTintColor = Math.abs(palette.getDarkMutedColor(defaultColor));
+                    } else if (palette.getMutedColor(defaultColor) != 0) {
+                        mTintColor = Math.abs(palette.getMutedColor(defaultColor));
+                    } else {
+                        Log.i(TAG, "Could not pick color from bitmap, using default tint : " + "");
+                    }
+                }
+            });
+        }
+    }
+
+    private void pickColorFromBitmap() {
+        if (mImageBitmap != null) {
+            Palette palette = Palette.from(mImageBitmap).generate();
+
+            int defaultColor = 0x000000;
+            if (palette.getDominantColor(defaultColor) != 0) {
+                mTintColor = Math.abs(palette.getDominantColor(defaultColor));
+            } else if (palette.getDarkVibrantColor(defaultColor) != 0) {
+                mTintColor = Math.abs(palette.getDarkVibrantColor(defaultColor));
+            } else if (palette.getDarkMutedColor(defaultColor) != 0) {
+                mTintColor = Math.abs(palette.getDarkMutedColor(defaultColor));
+            } else if (palette.getMutedColor(defaultColor) != 0) {
+                mTintColor = Math.abs(palette.getMutedColor(defaultColor));
+            } else {
+                Log.i(TAG, "Could not pick color from bitmap, using default tint : " + "");
+            }
+        }
     }
 
     public void setImageRes(int imgRes) {
@@ -352,6 +405,11 @@ public class GlazyImageView extends View {
 
     public void setCutPhaseShift(int phaseShift) {
         mCutPhaseShift = phaseShift;
+    }
+
+    public void setTintColor(int tintColor) {
+        mTintColor = tintColor;
+        mAutoTint = false;
     }
 
 }
