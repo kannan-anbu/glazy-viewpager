@@ -37,24 +37,27 @@ public class GlazyCardFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View v =  inflater.inflate(R.layout.layout_page_2, container, false);
-        TextView title = (TextView) v.findViewById(R.id.title_text);
-        title.setText(card.getTitle());
+        v.setBackgroundColor(card.getBackgroundColor());
+
+//        TextView title = (TextView) v.findViewById(R.id.title_text);
+//        title.setText(card.getTitle());
 
         TextView description = (TextView) v.findViewById(R.id.description_text);
         description.setText(card.getDescription());
 
         GlazyImageView imgView = (GlazyImageView) v.findViewById(R.id.glazy_image_view);
         imgView.setImageRes(card.getImageRes());
-        imgView.setBackgroundColor(card.getBackgroundColor());
+//        imgView.setBackgroundColor(card.getBackgroundColor());
         imgView.setCutType(card.getImageCutType());
         imgView.setCutAngle(card.getImageCutAngle());
         imgView.setCutCount(card.getImageCutCount());
         imgView.setCutHeight(card.getImageCutHeight());
         imgView.setCutPhaseShift(card.getImageCutPhaseShift());
+        imgView.setTitleText(card.getTitle());
 //        v.setBackgroundColor(card.getBackgroundColor());
 
         ScrollView textContainer = (ScrollView) v.findViewById(R.id.text_container);
-        textContainer.setBackgroundColor(card.getBackgroundColor());
+//        textContainer.setBackgroundColor(card.getBackgroundColor());
 //        Log.i("app", "scroll view hight" + Utils.getPixelForDp(getContext(), card.getCoverHeight_dp()));
 //        textContainer.setLayoutParams(
 //                new RelativeLayout.LayoutParams(

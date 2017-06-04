@@ -11,8 +11,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.media.ThumbnailUtils;
 import android.support.v7.graphics.Palette;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -33,13 +36,27 @@ public class GlazyImageView extends View {
     private Paint mBitmapPaint;
     private Shader mGradientShader;
     private Paint mGradientPaint;
-    private Paint mCutPaint;
+    private Paint mTintPaint;
+    private TextPaint mTitleTextPaint;
+    private String mTitleText;
+    private int mTitleTextColor;
+    private int mTitleTextSize;
+    private TextPaint mSubTitleTextPaint;
+    private String mSubTitleText;
+    private int mSubTitleTextColor;
+    private int mSubTitleTextSize;
+    private int mTextMargin;
+    private int mTitleTextX;
+    private int mTitleTextY;
+    private int mSubTitleTextX;
+    private int mSubTitleTextY;
     private ArrayList<Path> mPathsFull;
     private ArrayList<Path> mPathsScaled;
     private Matrix mScaleMatrix;
 
     private boolean mAutoTint;
     private int mTintColor;
+    private int mTintAlpha;
 
     private float mHeight;
     private float mWidth;
@@ -110,8 +127,34 @@ public class GlazyImageView extends View {
         mGradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mGradientPaint.setStyle(Paint.Style.FILL);
 
-        mCutPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mCutPaint.setStyle(Paint.Style.FILL);
+        mTintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTintPaint.setStyle(Paint.Style.FILL);
+
+        mTitleTextColor = Color.WHITE;
+        mTitleText = "";
+        mTitleTextSize = Utils.dpToPx(20, mContext);
+        mTextMargin = Utils.dpToPx(10, mContext);
+        mTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mTitleTextPaint.setTextSize(mTitleTextSize);
+        mTitleTextPaint.setTextAlign(Paint.Align.LEFT);
+        mTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
+//        mTitleTextPaint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
+        mTitleTextPaint.setStyle(Paint.Style.FILL);
+        mTitleTextPaint.setColor(mTitleTextColor);
+
+        mSubTitleTextColor = Color.GRAY;
+        mSubTitleText = "ACTORACTORACTORACTORACTORACTORACTORACTORACTORACTORACTOR";
+        mSubTitleTextSize = Utils.dpToPx(10, mContext);
+        mSubTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
+        mSubTitleTextPaint.setTextAlign(Paint.Align.LEFT);
+        mSubTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
+//        mTitleTextPaint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
+        mSubTitleTextPaint.setStyle(Paint.Style.FILL);
+        mSubTitleTextPaint.setColor(mSubTitleTextColor);
+//        mTitleTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+
 
         mBitmapScaleRectOriginal = new RectF();
         mPathsFull = new ArrayList<>();
@@ -120,6 +163,7 @@ public class GlazyImageView extends View {
 
         mAutoTint = false;
         mTintColor = Color.parseColor("#cc000000");
+        mTintAlpha = 100;
 
         mCutCount = 3;
         mCutAngle = 10;
@@ -148,21 +192,34 @@ public class GlazyImageView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mImageRes != -1 && mImageBitmap != null) {
+            mTintPaint.setAlpha(mTintAlpha);
             for (int i = 1; i < mPathsScaled.size(); i++) {
-                canvas.drawPath(mPathsScaled.get(i), mCutPaint);
+                canvas.drawPath(mPathsScaled.get(i), mTintPaint);
             }
             if (mPathsScaled.size() > 0) {
                 canvas.clipPath(mPathsScaled.get(0));
                 canvas.drawBitmap(mImageBitmap, null, mBitmapScaleRect, mBitmapPaint);
 //                canvas.clipRect(mBitmapScaleRect);
                 canvas.drawPath(mPathsScaled.get(0), mGradientPaint);
+                mTintPaint.setAlpha((int) (255 * (1-mOpenFactor)));
+                canvas.drawPath(mPathsScaled.get(0), mTintPaint);
 //                canvas.drawPaint(mGradientPaint);
+            }
+            float f = mOpenFactor - 0.5f;
+            if (f > 0) {
+                mTitleTextPaint.setAlpha((int) (255 * (f * 2)));
+                mSubTitleTextPaint.setAlpha((int) (255 * (f * 2)));
+                canvas.drawText(mTitleText, mTitleTextX, mTitleTextY, mTitleTextPaint);
+                canvas.drawText(mSubTitleText, mSubTitleTextX, mSubTitleTextY, mSubTitleTextPaint);
             }
         }
     }
 
     public void update(float factor) {
 //        Log.i(TAG, "update");
+//        if (Math.abs(mOpenFactor - factor) < 0.001) {
+//            return;
+//        }
         mOpenFactor = factor;
         mScaleMatrix.setScale(1f, factor);
         mPathsScaled.clear();
@@ -179,13 +236,16 @@ public class GlazyImageView extends View {
         );
 
         RectF bound = new RectF();
-        mPathsFull.get(0).computeBounds(bound, true);
-//        mPathsScaled.get(0).offset(0, - Math.abs(mBitmapScaleRectOriginal.top - mBitmapScaleRect.top));
-//        mPathsScaled.get(0).offset(0, -(bound.height() / 2 * (1 - mOpenFactor)));
-        mGradientShader = Utils.getLinearGradient(mWidth, bound.height(), Color.parseColor("#00000000"), mTintColor);
-        mGradientPaint.setColor(Color.BLACK);
-//        mGradientPaint.setShader(mGradientShader);
-        mGradientPaint.setAlpha((int) (255 * (1-mOpenFactor)));
+        mPathsScaled.get(0).computeBounds(bound, true);
+
+        mSubTitleTextX = mTextMargin;
+        mSubTitleTextY = (int) (bound.height() -
+                (mCutHeight * mOpenFactor + mSubTitleTextSize));
+
+        mTitleTextX = mTextMargin;
+        mTitleTextY = mSubTitleTextY - 2 * mSubTitleTextSize;
+//        mTitleTextY = (int) (bound.height() - ((bound.height() / 5) * (1 )));
+
         postInvalidate();
     }
 
@@ -194,6 +254,7 @@ public class GlazyImageView extends View {
             prepareBitmap();
             createPaths();
             prepareTints();
+            prepareText();
         }
     }
 
@@ -257,10 +318,31 @@ public class GlazyImageView extends View {
         }
         mGradientShader = Utils.getLinearGradient(
                 mWidth, mHeight, Color.parseColor("#00000000"), mTintColor);
-//        mGradientPaint.setShader(mGradientShader);
+        mGradientPaint.setShader(mGradientShader);
         mGradientPaint.setAlpha(255);
-        mCutPaint.setColor(mTintColor);
-        mCutPaint.setAlpha(100);
+        mTintPaint.setColor(mTintColor);
+        mTintPaint.setAlpha(255);
+    }
+
+    private void prepareText() {
+        if (mTitleText != null && !mTitleText.trim().equals("")) {
+            float availableSpace = (mWidth - 2 * mTextMargin) * 0.75f;
+            mTitleText = TextUtils.ellipsize(
+                    mTitleText,
+                    mTitleTextPaint,
+                    availableSpace,
+                    TextUtils.TruncateAt.END
+            ).toString();
+        }
+        if (mSubTitleText != null && !mSubTitleText.trim().equals("")) {
+            float availableSpace = (mWidth - 2 * mTextMargin) * 0.5f;
+            mSubTitleText = TextUtils.ellipsize(
+                    mSubTitleText,
+                    mSubTitleTextPaint,
+                    availableSpace,
+                    TextUtils.TruncateAt.END
+            ).toString();
+        }
     }
 
     private void prepareBitmap() {
@@ -410,6 +492,30 @@ public class GlazyImageView extends View {
     public void setTintColor(int tintColor) {
         mTintColor = tintColor;
         mAutoTint = false;
+    }
+
+    public void setTitleText(String title) {
+        mTitleText = title;
+    }
+
+    public void setTitleTextColor(int color) {
+        mTitleTextColor = color;
+    }
+
+    public void setTitleTextSize(int size) {
+        mTitleTextSize = size;
+    }
+
+    public void setSubTitleText(String title) {
+        mSubTitleText = title;
+    }
+
+    public void setSubTitleTextColor(int color) {
+        mSubTitleTextColor = color;
+    }
+
+    public void setSubTitleTextSize(int size) {
+        mSubTitleTextSize = size;
     }
 
 }

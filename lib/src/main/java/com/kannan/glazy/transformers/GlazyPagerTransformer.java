@@ -2,7 +2,6 @@ package com.kannan.glazy.transformers;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.TextView;
 
 import com.kannan.glazy.R;
 import com.kannan.glazy.views.GlazyImageView;
@@ -40,11 +39,14 @@ import com.kannan.glazy.views.GlazyImageView;
 
             GlazyImageView iv = (GlazyImageView) page.findViewById(R.id.glazy_image_view);
 //            RevealImageView iv = (RevealImageView) page.findViewById(R.id.fragment_cardview_image);
-            String t = ((TextView) page.findViewById(R.id.title_text)).getText().toString();
+//            String t = ((TextView) page.findViewById(R.id.title_text)).getText().toString();
             float f = 1.0f - Math.abs(position);
 //            Log.i("app", t +  f );
             iv.update(f);
 //            page.invalidate();
+
+//            TextView tv = (TextView) page.findViewById(R.id.title_text);
+//            tv.setPadding(50, 50, 50, (int) (iv.getHeight() * position));
         }
         switch (mTransformType) {
             case FLOW:

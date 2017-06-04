@@ -34,7 +34,7 @@ public class GlazyCard implements Serializable{
         mImageCutHeight = 0;
         mImageCutPhaseShift = 0;
         mAutoTint = true;
-        mBackgroundColor = Color.parseColor("#FFEFD4");
+        mBackgroundColor = Color.parseColor("#fff1f1f1");
         mHasImageSource = false;
     }
 
