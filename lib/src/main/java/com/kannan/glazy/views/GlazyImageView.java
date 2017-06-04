@@ -2,6 +2,7 @@ package com.kannan.glazy.views;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,6 +21,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.kannan.glazy.R;
 import com.kannan.glazy.Utils;
 
 import java.util.ArrayList;
@@ -29,27 +31,48 @@ public class GlazyImageView extends View {
 
     private String TAG = "glazy"; //GlazyImageView.class.getSimpleName();
 
+    private final int           DEF_IMAGE_RES               = -1;
+    private final String        DEF_TITLE_TEXT              = "";
+    private final int           DEF_TITLE_TEXT_COLOR        = Color.WHITE;
+    private final int           DEF_TITLE_TEXT_SIZE_DP      = 20;
+    private final String        DEF_SUB_TITLE_TEXT          = "";
+    private final int           DEF_SUB_TITLE_TEXT_COLOR    = Color.GRAY;
+    private final int           DEF_SUB_TITLE_TEXT_SIZE_DP  = 10;
+    private final int           DEF_TEXT_MARGIN_DP          = 15;
+    private final int           DEF_TINT_COLOR              = Color.BLACK;
+    private final int           DEF_TINT_ALPHA              = 150;
+    private final ImageCutType  DEF_IMAGE_CUT_TYPE          = ImageCutType.WAVE;
+    private final int           DEF_CUT_COUNT               = 3;
+
     private Context mContext;
+
+    private float mHeight;
+    private float mWidth;
 
     private int mImageRes = -1;
     private Bitmap mImageBitmap;
     private Paint mBitmapPaint;
+    private RectF mBitmapScaleRectOriginal;
+    private RectF mBitmapScaleRect;
+
     private Shader mGradientShader;
     private Paint mGradientPaint;
-    private Paint mTintPaint;
-    private TextPaint mTitleTextPaint;
+
     private String mTitleText;
     private int mTitleTextColor;
     private int mTitleTextSize;
-    private TextPaint mSubTitleTextPaint;
+    private TextPaint mTitleTextPaint;
+    private int mTitleTextX;
+    private int mTitleTextY;
+
     private String mSubTitleText;
     private int mSubTitleTextColor;
     private int mSubTitleTextSize;
-    private int mTextMargin;
-    private int mTitleTextX;
-    private int mTitleTextY;
+    private TextPaint mSubTitleTextPaint;
     private int mSubTitleTextX;
     private int mSubTitleTextY;
+    private int mTextMargin;
+
     private ArrayList<Path> mPathsFull;
     private ArrayList<Path> mPathsScaled;
     private Matrix mScaleMatrix;
@@ -57,21 +80,15 @@ public class GlazyImageView extends View {
     private boolean mAutoTint;
     private int mTintColor;
     private int mTintAlpha;
-
-    private float mHeight;
-    private float mWidth;
+    private Paint mTintPaint;
 
     private ImageCutType mCutType;
     private int mCutAngle;
     private int mCutCount;
     private int mCutHeight;
     private int mCutPhaseShift;
+
     private float mOpenFactor;
-
-    private RectF mBitmapScaleRectOriginal;
-    private RectF mBitmapScaleRect;
-
-    private boolean flag = false;
 
     public enum ImageCutType {
         LINE(0),
@@ -103,23 +120,67 @@ public class GlazyImageView extends View {
 
         mContext = context;
 
-//        if(attrs != null){
-//            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.GlazyImageView);
-//            try {
-//                if (array.hasValue(R.styleable.GlazyImageView_src))
-//                    mImageRes = array.getResourceId(R.styleable.GlazyImageView_src, -1);
-//                if (array.hasValue(R.styleable.GlazyImageView_coverHeight))
-//                    mCoverHeight = array.getDimensionPixelSize(R.styleable.GlazyImageView_coverHeight, 100);
-//                if (array.hasValue(R.styleable.GlazyImageView_slopeHeight))
-//                    mSlopeHeight = array.getDimensionPixelSize(R.styleable.GlazyImageView_slopeHeight, 100);
-//                if (array.hasValue(R.styleable.GlazyImageView_tintColor))
-//                    mCoverTint = array.getColor(R.styleable.GlazyImageView_tintColor, Color.YELLOW);
-//            } finally {
-//                array.recycle();
-//            }
-//        }
-
         setLayerType(LAYER_TYPE_NONE, null);
+
+
+        mTextMargin = Utils.dpToPx(DEF_TEXT_MARGIN_DP, mContext);
+        mTitleTextColor = DEF_TITLE_TEXT_COLOR;
+        mTitleText = DEF_TITLE_TEXT;
+        mTitleTextSize = Utils.dpToPx(DEF_TITLE_TEXT_SIZE_DP, mContext);
+        mSubTitleTextColor = DEF_SUB_TITLE_TEXT_COLOR;
+        mSubTitleText = DEF_SUB_TITLE_TEXT;
+        mSubTitleTextSize = Utils.dpToPx(DEF_SUB_TITLE_TEXT_SIZE_DP, mContext);
+
+        mAutoTint = false;
+        mTintColor = DEF_TINT_COLOR;
+        mTintAlpha = DEF_TINT_ALPHA;
+
+        mCutCount = DEF_CUT_COUNT;
+
+        mCutAngle = 0;
+        mCutHeight = 0;
+        mOpenFactor = 0f;
+
+        if(attrs != null){
+            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.GlazyImageView);
+            try {
+                if (array.hasValue(R.styleable.GlazyImageView_src))
+                    mImageRes = array.getResourceId(R.styleable.GlazyImageView_src, DEF_IMAGE_RES);
+                if (array.hasValue(R.styleable.GlazyImageView_cutType))
+                     mCutType = array.getInteger(R.styleable.GlazyImageView_cutType, DEF_IMAGE_CUT_TYPE);
+                if (array.hasValue(R.styleable.GlazyImageView_cutHeight))
+                     mCutHeight = array.getDimensionPixelSize(R.styleable.GlazyImageView_cutHeight, mCutHeight);
+                if (array.hasValue(R.styleable.GlazyImageView_cutCount))
+                     mCutCount = array.getInteger(R.styleable.GlazyImageView_cutCount, DEF_CUT_COUNT);
+                if (array.hasValue(R.styleable.GlazyImageView_autoTint))
+                     mAutoTint = array.getBoolean(R.styleable.GlazyImageView_autoTint, false);
+                if (array.hasValue(R.styleable.GlazyImageView_tintColor))
+                     mTintColor= array.getColor(R.styleable.GlazyImageView_tintColor, DEF_TINT_COLOR);
+                if (array.hasValue(R.styleable.GlazyImageView_tintAlpha))
+                     mTintAlpha = array.getInteger(R.styleable.GlazyImageView_tintAlpha, DEF_TINT_ALPHA);
+                if (array.hasValue(R.styleable.GlazyImageView_titleText))
+                     mTitleText = array.getString(R.styleable.GlazyImageView_titleText);
+                if (array.hasValue(R.styleable.GlazyImageView_titleTextColor))
+                     mTitleTextColor = array.getColor(R.styleable.GlazyImageView_titleTextColor, DEF_TITLE_TEXT_COLOR);
+                if (array.hasValue(R.styleable.GlazyImageView_titleTextSize))
+                     mTitleTextSize= array.getDimensionPixelSize(R.styleable.GlazyImageView_titleTextSize, Utils.dpToPx(DEF_TITLE_TEXT_SIZE_DP, mContext);
+                if (array.hasValue(R.styleable.GlazyImageView_subTitleText))
+                    mSubTitleText = array.getString(R.styleable.GlazyImageView_subTitleText);
+                if (array.hasValue(R.styleable.GlazyImageView_subTitleTextColor))
+                    mSubTitleTextColor = array.getColor(R.styleable.GlazyImageView_subTitleTextColor, DEF_SUB_TITLE_TEXT_COLOR);
+                if (array.hasValue(R.styleable.GlazyImageView_subTitleTextSize))
+                    mSubTitleTextSize= array.getDimensionPixelSize(R.styleable.GlazyImageView_subTitleTextSize, Utils.dpToPx(DEF_SUB_TITLE_TEXT_SIZE_DP, mContext);
+                if (array.hasValue(R.styleable.GlazyImageView_textMargin))
+                     mTextMargin = array.getDimensionPixelSize(R.styleable.GlazyImageView_textMargin, Utils.dpToPx(DEF_TEXT_MARGIN_DP, mContext);
+                if (array.hasValue(R.styleable.GlazyImageView_lineSpacing))
+                     mLineSpacing = array.getDimensionPixelSize(R.styleable.GlazyImageView_lineSpacing, );
+                if (array.hasValue(R.styleable.GlazyImageView_openFactor, ))
+                     mOpenFactor = array.getInteger(R.styleable.GlazyImageView_);
+            } finally {
+                array.recycle();
+            }
+        }
+
 
         mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBitmapPaint.setStyle(Paint.Style.FILL);
@@ -130,29 +191,19 @@ public class GlazyImageView extends View {
         mTintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTintPaint.setStyle(Paint.Style.FILL);
 
-        mTitleTextColor = Color.WHITE;
-        mTitleText = "";
-        mTitleTextSize = Utils.dpToPx(20, mContext);
-        mTextMargin = Utils.dpToPx(10, mContext);
         mTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTitleTextPaint.setTextSize(mTitleTextSize);
         mTitleTextPaint.setTextAlign(Paint.Align.LEFT);
         mTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
-//        mTitleTextPaint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
         mTitleTextPaint.setStyle(Paint.Style.FILL);
         mTitleTextPaint.setColor(mTitleTextColor);
 
-        mSubTitleTextColor = Color.GRAY;
-        mSubTitleText = "ACTORACTORACTORACTORACTORACTORACTORACTORACTORACTORACTOR";
-        mSubTitleTextSize = Utils.dpToPx(10, mContext);
         mSubTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
         mSubTitleTextPaint.setTextAlign(Paint.Align.LEFT);
         mSubTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
-//        mTitleTextPaint.setTypeface(Typeface.create("Arial", Typeface.BOLD));
         mSubTitleTextPaint.setStyle(Paint.Style.FILL);
         mSubTitleTextPaint.setColor(mSubTitleTextColor);
-//        mTitleTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
 
 
@@ -161,14 +212,6 @@ public class GlazyImageView extends View {
         mPathsScaled = new ArrayList<>();
         mScaleMatrix = new Matrix();
 
-        mAutoTint = false;
-        mTintColor = Color.parseColor("#cc000000");
-        mTintAlpha = 100;
-
-        mCutCount = 3;
-        mCutAngle = 10;
-        mCutHeight = 100;
-        mOpenFactor = 0f;
     }
 
     @Override

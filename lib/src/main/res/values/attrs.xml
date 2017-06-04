@@ -2,42 +2,53 @@
 <resources>
 
     <attr name="src" format="reference" />
-    <attr name="cutType">
+    <attr name="cutType" format="enum">
         <enum name="line" value="0" />
         <enum name="arc" value="1" />
         <enum name="wave" value="2" />
     </attr>
-    <attr name="cutAngle" format="integer" />
+    <attr name="cutHeight" format="dimension" />
     <attr name="cutCount" format="integer" />
-
-    <attr name="gradientType">
-        <enum name="linear" value="0" />
-        <enum name="radial" value="1" />
-    </attr>
-    <attr name="gradient_startColor" format="color" />
-    <attr name="gradient_endColor" format="color" />
-    <attr name="gradientAngle" format="integer" />
 
     <attr name="autoTint" format="boolean" />
     <attr name="tintColor" format="color" />
     <attr name="tintAlpha" format="integer" />
 
+    <attr name="titleText" format="string" />
+    <attr name="titleTextColor" format="color" />
+    <attr name="titleTextSize" format="dimension" />
+    <attr name="subTitleText" format="string" />
+    <attr name="subTitleTextColor" format="color" />
+    <attr name="subTitleTextSize" format="dimension" />
+    <attr name="textMargin" format="dimension" />
+    <attr name="lineSpacing" format="dimension" />
+
+    <attr name="openFactor" format="float"/>
+
 
     <declare-styleable name="GlazyImageView">
 
         <attr name="src" />
-        <attr name="cutType" />
-        <attr name="cutAngle" />
-        <attr name="cutCount" />
 
-        <attr name="gradientType" />
-        <attr name="gradient_startColor" />
-        <attr name="gradient_endColor" />
-        <attr name="gradientAngle" />
+        <attr name="cutType" />
+        <attr name="cutHeight" />
+        <attr name="cutCount" />
 
         <attr name="autoTint" />
         <attr name="tintColor" />
         <attr name="tintAlpha" />
 
+        <attr name="titleText" />
+        <attr name="titleTextColor" />
+        <attr name="titleTextSize" />
+        <attr name="subTitleText" />
+        <attr name="subTitleTextColor" />
+        <attr name="subTitleTextSize" />
+        <attr name="textMargin" />
+        <attr name="lineSpacing" />
+
+        <attr name="openFactor" />
+
     </declare-styleable>
+
 </resources>
