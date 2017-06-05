@@ -1,21 +1,31 @@
 package com.kannan.glazy;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.LinearGradient;
 import android.graphics.Path;
 import android.graphics.Shader;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 public class Utils {
 
-    public static int getPixelForDp(Context context, int displayPixels) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, displayPixels, context.getResources().getDisplayMetrics());
+//    public static int[] getScreenSize(Context context) {
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//        int height = displayMetrics.heightPixels;
+//        int width = displayMetrics.widthPixels;
+//    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
-    public static int dpToPx(int dp, Context ctx) {
-        DisplayMetrics dMat = ctx.getResources().getDisplayMetrics();
-        return Math.round(dp * (dMat.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
+
+    public static int dpToPx(Context ctx, int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, ctx.getResources().getDisplayMetrics());
     }
 
 //    public static Path getWavePath1(float width, float height, float amplitude, float shift, float divide) {
@@ -36,6 +46,10 @@ public class Utils {
 
     public static Path getWavePath(
             float width, float height, float amplitude, float cyclesPerSocond, float phaseShift) {
+        if(amplitude > height * 2) {
+            amplitude = height / 12;
+        }
+
         int unitPixels = 15;
         float heightDiff = height - amplitude;
 
@@ -57,11 +71,8 @@ public class Utils {
     }
 
     public static Path getLinePath(
-            float width, float height, float angle) {
+            float width, float height, float cutHeight, boolean negativeSlope) {
 
-        float cutHeight = Math.abs(
-                ((float) Math.tan(Math.toRadians(angle))) * width
-        );
         if (cutHeight >= height) {
             cutHeight = height / 6;
         }
@@ -73,16 +84,16 @@ public class Utils {
         y[0] = 0;
         x[1] = width;
         y[1] = 0;
-        if (angle < 90) {
-            x[2] = width;
-            y[2] = (height - cutHeight);
-            x[3] = 0;
-            y[3] = height;
-        } else {
+        if (negativeSlope) {
             x[2] = width;
             y[2] = height;
             x[3] = 0;
             y[3] = (height - cutHeight);
+        } else {
+            x[2] = width;
+            y[2] = (height - cutHeight);
+            x[3] = 0;
+            y[3] = height;
         }
 
         Path path = new Path();

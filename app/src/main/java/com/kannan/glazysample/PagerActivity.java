@@ -2,20 +2,19 @@ package com.kannan.glazysample;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.kannan.glazy.GlazyCard;
 import com.kannan.glazy.Utils;
 import com.kannan.glazy.pager.GlazyFragmentPagerAdapter;
+import com.kannan.glazy.pager.GlazyViewPager;
 import com.kannan.glazy.transformers.GlazyPagerTransformer;
 import com.kannan.glazy.views.GlazyImageView.ImageCutType;
 
 public class PagerActivity extends AppCompatActivity {
 
-    private ViewPager mPager;
+    private GlazyViewPager mPager;
     private GlazyFragmentPagerAdapter mPagerAdapter;
 
     @Override
@@ -26,29 +25,29 @@ public class PagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pager);
         setTitle("GlazyViewPager");
 
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setOnPageChangeListener(
-                new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-                        if (state != ViewPager.SCROLL_STATE_IDLE) {
-                            final int childCount = mPager.getChildCount();
-                            for (int i = 0; i < childCount; i++)
-                                mPager.getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
-                        }
-                    }
-                }
-        );
+        mPager = (GlazyViewPager) findViewById(R.id.pager);
+//        mPager.setOnPageChangeListener(
+//                new ViewPager.OnPageChangeListener() {
+//                    @Override
+//                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onPageSelected(int position) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onPageScrollStateChanged(int state) {
+//                        if (state != ViewPager.SCROLL_STATE_IDLE) {
+//                            final int childCount = mPager.getChildCount();
+//                            for (int i = 0; i < childCount; i++)
+//                                mPager.getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
+//                        }
+//                    }
+//                }
+//        );
         mPagerAdapter = new GlazyFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext());
         int imageResId = getApplicationContext().getResources().getIdentifier("matt_le_blanc", "drawable", getPackageName());
 
@@ -65,19 +64,22 @@ public class PagerActivity extends AppCompatActivity {
             mPagerAdapter.addCardItem(
                     new GlazyCard()
                             .withTitle(desc)
+                            .withSubTitle(desc)
                             .withDescription(desc)
                             .withImageRes(imageResId)
                             .withImageCutType(ImageCutType.WAVE)
                             .withImageCutCount(3)
-                            .withImageCutHeight(60));
+                            .withImageCutHeight(100)
+            );
             mPagerAdapter.addCardItem(
                     new GlazyCard()
                             .withTitle(title)
                             .withDescription(desc)
                             .withImageRes(imageResId)
-                            .withImageCutType(ImageCutType.LINE)
+                            .withImageCutType(ImageCutType.LINE_POSITIVE)
                             .withImageCutCount(3)
-                            .withImageCutAngle(10));
+                            .withImageCutHeight(100)
+            );
             mPagerAdapter.addCardItem(
                     new GlazyCard()
                             .withTitle(title)
@@ -85,15 +87,29 @@ public class PagerActivity extends AppCompatActivity {
                             .withImageRes(imageResId)
                             .withImageCutType(ImageCutType.ARC)
                             .withImageCutCount(3)
-                            .withImageCutHeight(60));
+                            .withImageCutHeight(100)
+            );
+            mPagerAdapter.addCardItem(
+                    new GlazyCard()
+                            .withTitle(title)
+                            .withDescription(desc)
+                            .withImageRes(imageResId)
+                            .withImageCutType(ImageCutType.LINE_NEGATIVE)
+                            .withImageCutCount(3)
+                            .withImageCutHeight(100)
+            );
         }
 
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(2);
         mPager.setClipToPadding(false);
-        mPager.setPageMargin(Utils.dpToPx(15, this));
+        mPager.setPageMargin(Utils.dpToPx(getApplicationContext(), 20));
 
-        mPager.setPageTransformer(true, new GlazyPagerTransformer(GlazyPagerTransformer.TransformType.ZOOM));
+        mPager.setPageTransformer(true,
+                new GlazyPagerTransformer(
+                        GlazyPagerTransformer.TransformType.ZOOM)
+
+        );
     }
 
 }

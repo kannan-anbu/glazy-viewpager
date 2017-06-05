@@ -1,12 +1,16 @@
 package com.kannan.glazy.transformers;
 
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.TextView;
 
 import com.kannan.glazy.R;
+import com.kannan.glazy.Utils;
+import com.kannan.glazy.pager.GlazyViewPager;
 import com.kannan.glazy.views.GlazyImageView;
 
- public class GlazyPagerTransformer implements ViewPager.PageTransformer {
+public class GlazyPagerTransformer implements ViewPager.PageTransformer {
 
     public enum TransformType {
         FLOW,
@@ -23,14 +27,21 @@ import com.kannan.glazy.views.GlazyImageView;
     private static final float SCALE_FACTOR_SLIDE   = 0.85f;
     private static final float MIN_ALPHA_SLIDE      = 0.35f;
 
+    private int mScreenWidth;
+    private Context mContext;
+    private GlazyViewPager mPager;
+
     public GlazyPagerTransformer(TransformType transformType) {
         this.mTransformType = transformType;
+        mScreenWidth = Utils.getScreenWidth();
     }
 
     @Override
-    public void transformPage(View page, float position1) {
+    public void transformPage(View page, float posActual) {
         final float alpha, scale, translationX;
-        float position = position1 - 0.13157895f;// - 0.15084746f;
+        float posCorrection = - (float) mPager.getPaddingLeft() / page.getWidth();
+
+        float position = posActual + posCorrection;
 
         if(Math.abs(position) <= 1.1) {
 //            TextView tv = (TextView) page.findViewById(R.id.fragment_cardview_title);
@@ -42,11 +53,19 @@ import com.kannan.glazy.views.GlazyImageView;
 //            String t = ((TextView) page.findViewById(R.id.title_text)).getText().toString();
             float f = 1.0f - Math.abs(position);
 //            Log.i("app", t +  f );
+            iv.setTitleText("" + posActual);
+            iv.setSubTitleText("" + position);
             iv.update(f);
 //            page.invalidate();
 
-//            TextView tv = (TextView) page.findViewById(R.id.title_text);
-//            tv.setPadding(50, 50, 50, (int) (iv.getHeight() * position));
+            TextView tv = (TextView) page.findViewById(R.id.description_text);
+            tv.setText("" + position + "\n" + posActual +
+                    "\n" + mScreenWidth + "\n" + page.getWidth()
+                    + "\n" + page.getX()
+            + "\n" + mPager.getPaddingLeft()
+            + "\n" + Utils.dpToPx(mContext, 40) + " " + posCorrection
+            + " " + mPager.getPaddingLeft() + " " + mPager.getPaddingRight());
+// tv.setPadding(50, 50, 50, (int) (iv.getHeight() * position));
         }
         switch (mTransformType) {
             case FLOW:
@@ -105,5 +124,13 @@ import com.kannan.glazy.views.GlazyImageView;
 //        page.setTranslationX(translationX);
 //        page.setScaleX(scale);
 //        page.setScaleY(scale);
+    }
+
+    public void setContext(Context context) {
+        mContext = context.getApplicationContext();
+    }
+
+    public void attachedPager(GlazyViewPager pager) {
+        mPager = pager;
     }
 }

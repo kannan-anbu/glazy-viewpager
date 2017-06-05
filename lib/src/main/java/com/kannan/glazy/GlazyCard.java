@@ -9,11 +9,12 @@ import java.io.Serializable;
 public class GlazyCard implements Serializable{
 
     private String mTitle;
+    private String mSubTitle;
     private String mDescription;
     private int mImageRes;
 
     private ImageCutType mImageCutType;
-    private int mImageCutAngle;
+//    private int mImageCutAngle;
     private int mImageCutCount;
     private int mImageCutHeight;
     private int mImageCutPhaseShift;
@@ -27,9 +28,10 @@ public class GlazyCard implements Serializable{
 
     public GlazyCard() {
         mTitle = "TITLE";
+        mSubTitle = "SUB TITLE";
         mDescription = "jfhkjuh fgfuhkjh fuyhkhk ksfhghkfhgkfjh ";
-        mImageCutType = ImageCutType.LINE;
-        mImageCutAngle = 20;
+        mImageCutType = ImageCutType.LINE_POSITIVE;
+//        mImageCutAngle = 20;
         mImageCutCount = 2;
         mImageCutHeight = 0;
         mImageCutPhaseShift = 0;
@@ -47,6 +49,11 @@ public class GlazyCard implements Serializable{
 
     public GlazyCard withTitle(String title) {
         mTitle = title;
+        return this;
+    }
+
+    public GlazyCard withSubTitle(String subTitle) {
+        mSubTitle = subTitle;
         return this;
     }
 
@@ -112,10 +119,10 @@ public class GlazyCard implements Serializable{
         return this;
     }
 
-    public GlazyCard withImageCutAngle(int angle) {
-        mImageCutAngle = angle;
-        return this;
-    }
+//    public GlazyCard withImageCutAngle(int angle) {
+//        mImageCutAngle = angle;
+//        return this;
+//    }
 
     public GlazyCard withImageCutCount(int count) {
         mImageCutCount = count;
@@ -149,6 +156,10 @@ public class GlazyCard implements Serializable{
         return mTitle;
     }
 
+    public String getSubTitle() {
+        return mSubTitle;
+    }
+
 //    public int getCoverHeight_dp() {
 //        return mCoverHeight_dp;
 //    }
@@ -177,9 +188,9 @@ public class GlazyCard implements Serializable{
         return mImageCutType;
     }
 
-    public int getImageCutAngle() {
-        return mImageCutAngle;
-    }
+//    public int getImageCutAngle() {
+//        return mImageCutAngle;
+//    }
 
     public int getImageCutCount() {
         return mImageCutCount;

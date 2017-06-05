@@ -49,11 +49,11 @@ public class GlazyCardFragment extends Fragment {
         imgView.setImageRes(card.getImageRes());
 //        imgView.setBackgroundColor(card.getBackgroundColor());
         imgView.setCutType(card.getImageCutType());
-        imgView.setCutAngle(card.getImageCutAngle());
+//        imgView.setCutAngle(card.getImageCutAngle());
         imgView.setCutCount(card.getImageCutCount());
         imgView.setCutHeight(card.getImageCutHeight());
-        imgView.setCutPhaseShift(card.getImageCutPhaseShift());
         imgView.setTitleText(card.getTitle());
+        imgView.setSubTitleText(card.getSubTitle());
 //        v.setBackgroundColor(card.getBackgroundColor());
 
         ScrollView textContainer = (ScrollView) v.findViewById(R.id.text_container);

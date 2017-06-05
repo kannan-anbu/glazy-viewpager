@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:glazy="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,7 +15,16 @@
             android:id="@+id/glazy_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="0dp"
+            glazy:cutType="wave"
+            glazy:cutHeight="50dp"
+            glazy:cutCount="3"
+            glazy:autoTint="false"
+            glazy:tintColor="#ff000000"
+            glazy:tintAlpha="125"
+            glazy:titleTextSize="25dp"
+            glazy:subTitleTextSize="18dp"
+            glazy:textMargin="25dp"
+            glazy:lineSpacing="10dp"
             />
         <!--<TextView-->
             <!--android:id="@+id/title_text"-->
@@ -66,8 +76,7 @@
                 android:textColor="#828282"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:lineSpacingMultiplier="1"
-                android:textAlignment="center"/>
+                android:lineSpacingMultiplier="1"/>
 
         </LinearLayout>
     </ScrollView>
