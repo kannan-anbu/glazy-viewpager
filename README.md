@@ -13,7 +13,7 @@ compile 'com.android.support:palette-v7:25.2.0'
 ```
 
 ### Usage
-    Refer [sample implementation](https://github.com/kannan-anbu/glazy-viewpager/blob/master/app/src/main/java/com/kannan/glazysample/PagerActivity.java).
+    Refer [sample implementation](https://github.com/kannan-anbu/glazy-viewpager/blob/master/app/src/main/java/com/kannan/glazysample/PagerActivity.java)
 ```xml
     <com.kannan.glazy.pager.GlazyViewPager
         android:layout_width="match_parent"
@@ -40,6 +40,7 @@ You can even use the GlazyImageView alone.
         glazy:textMargin="25dp"
         glazy:lineSpacing="10dp"
     />
+```
 
 License
 --------
