@@ -38,10 +38,10 @@ public class GlazyImageView extends View {
     private final String        DEF_SUB_TITLE_TEXT          = "";
     private final int           DEF_SUB_TITLE_TEXT_COLOR    = Color.GRAY;
     private final int           DEF_SUB_TITLE_TEXT_SIZE_DP  = 10;
-    private final int           DEF_TEXT_MARGIN_DP          = 15;
+    private final int           DEF_TEXT_MARGIN_DP          = 10;
     private final int           DEF_LINE_SPACING_DP         = DEF_SUB_TITLE_TEXT_SIZE_DP;
     private final int           DEF_TINT_COLOR              = Color.BLACK;
-    private final int           DEF_TINT_ALPHA              = 150;
+    private final int           DEF_TINT_ALPHA              = 125;
     private final ImageCutType  DEF_IMAGE_CUT_TYPE          = ImageCutType.WAVE;
     private final int           DEF_CUT_COUNT               = 3;
     private final int           DEF_CUT_HEIGHT              = 0;
@@ -87,10 +87,8 @@ public class GlazyImageView extends View {
     private Paint mTintPaint;
 
     private ImageCutType mCutType;
-    private int mCutAngle;
     private int mCutCount;
     private int mCutHeight;
-    private int mCutPhaseShift;
 
     private float mOpenFactor;
 
@@ -136,7 +134,6 @@ public class GlazyImageView extends View {
 
         setLayerType(LAYER_TYPE_NONE, null);
 
-
         mTextMargin = Utils.dpToPx(mContext, DEF_TEXT_MARGIN_DP);
         mTitleTextColor = DEF_TITLE_TEXT_COLOR;
         mTitleText = DEF_TITLE_TEXT;
@@ -151,8 +148,6 @@ public class GlazyImageView extends View {
         mTintAlpha = DEF_TINT_ALPHA;
 
         mCutCount = DEF_CUT_COUNT;
-
-//        mCutAngle = 0;
         mCutHeight = DEF_CUT_HEIGHT;
         mOpenFactor = 0f;
 
@@ -246,6 +241,7 @@ public class GlazyImageView extends View {
 
 
         mBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBitmapPaint.setFilterBitmap(true);
         mBitmapPaint.setStyle(Paint.Style.FILL);
 
         mGradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -264,7 +260,7 @@ public class GlazyImageView extends View {
         mSubTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
         mSubTitleTextPaint.setTextAlign(Paint.Align.LEFT);
-        mSubTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
+        mSubTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.NORMAL));
         mSubTitleTextPaint.setStyle(Paint.Style.FILL);
         mSubTitleTextPaint.setColor(mSubTitleTextColor);
 
@@ -295,6 +291,7 @@ public class GlazyImageView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.i(TAG, "onDraw");
         super.onDraw(canvas);
         if (mImageRes != -1 && mImageBitmap != null) {
             mTintPaint.setAlpha(mTintAlpha);
@@ -304,11 +301,9 @@ public class GlazyImageView extends View {
             if (mPathsScaled.size() > 0) {
                 canvas.clipPath(mPathsScaled.get(0));
                 canvas.drawBitmap(mImageBitmap, null, mBitmapScaleRect, mBitmapPaint);
-//                canvas.clipRect(mBitmapScaleRect);
-                canvas.drawPath(mPathsScaled.get(0), mGradientPaint);
-                mTintPaint.setAlpha((int) (200 * (1-mOpenFactor)));
+                canvas.drawPaint(mGradientPaint);
+                mTintPaint.setAlpha((int) (255 * (1-mOpenFactor)));
                 canvas.drawPath(mPathsScaled.get(0), mTintPaint);
-//                canvas.drawPaint(mGradientPaint);
             }
             float f = mOpenFactor - 0.5f;
             if (f > 0) {
@@ -322,9 +317,6 @@ public class GlazyImageView extends View {
 
     public void update(float factor) {
 //        Log.i(TAG, "update");
-//        if (Math.abs(mOpenFactor - factor) < 0.001) {
-//            return;
-//        }
         mOpenFactor = factor;
         mScaleMatrix.setScale(1f, factor);
         mPathsScaled.clear();
@@ -345,10 +337,10 @@ public class GlazyImageView extends View {
 
         mSubTitleTextX = mTextMargin;
         mSubTitleTextY = (int) (bound.height() -
-                (mCutHeight * mOpenFactor + mSubTitleTextSize));
+                (mCutHeight * 0.7)); //mOpenFactor + mSubTitleTextSize));
 
         mTitleTextX = mTextMargin;
-        mTitleTextY = mSubTitleTextY - 2 * mSubTitleTextSize;
+        mTitleTextY = (int) (mSubTitleTextY - 1.2 * mSubTitleTextSize);
 //        mTitleTextY = (int) (bound.height() - ((bound.height() / 5) * (1 )));
 
         postInvalidate();
@@ -365,56 +357,61 @@ public class GlazyImageView extends View {
 
     private void preparePaths() {
         Log.i(TAG, "preparePaths" + mWidth + " " + mHeight + " " + mOpenFactor);
-        mPathsFull.clear();
-        float cutHeightIncrement = mCutHeight / ((float) 1.5 * mCutCount);
+        if (mWidth != 0 && mHeight != 0) {
+            mPathsFull.clear();
+            float cutHeightIncrement = mCutHeight / ((float) 1.5 * mCutCount);
 
-        switch (mCutType) {
-            case LINE_POSITIVE:
-            case LINE_NEGATIVE:
-                for (int i = 0; i < mCutCount; i += 1) {
-                    mPathsFull.add(
-                            Utils.getLinePath(
-                                    mWidth,
-                                    mHeight,
-                                    mCutHeight - cutHeightIncrement * i,
-                                    mCutType.mType != 0
-                            )
-                    );
-                }
-                break;
-            case ARC:
-                for (int i = 0; i < mCutCount; i += 1) {
-                    mPathsFull.add(
-                            Utils.getWavePath(
-                                    mWidth,
-                                    mHeight,
-                                    mCutHeight - cutHeightIncrement * i,
-                                    0.05f,
-                                    mCutPhaseShift
-                            )
-                    );
-                }
-                break;
-            case WAVE:
-                for (int i = 0; i < mCutCount; i += 1) {
-                    mPathsFull.add(
-                            Utils.getWavePath(
-                                    mWidth,
-                                    mHeight,
-                                    (mCutHeight - cutHeightIncrement * i) / 2,
-                                    0.1f,
-                                    mCutPhaseShift
-                            )
-                    );
-                }
-                break;
-            default:
-                Log.e(TAG, "Unknown ImageCutType enum : " + mCutType + "\n"
-                + "switching to default value : " + "");
+            switch (mCutType) {
+                case LINE_POSITIVE:
+                case LINE_NEGATIVE:
+                    for (int i = 0; i < mCutCount; i += 1) {
+                        mPathsFull.add(
+                                Utils.getLinePath(
+                                        mWidth,
+                                        mHeight,
+                                        mCutHeight - cutHeightIncrement * i,
+                                        mCutType.mType != 0
+                                )
+                        );
+                    }
+                    break;
+                case ARC:
+                    for (int i = 0; i < mCutCount; i += 1) {
+                        mPathsFull.add(
+                                Utils.getWavePath(
+                                        mWidth,
+                                        mHeight,
+                                        mCutHeight - cutHeightIncrement * i,
+                                        0.05f,
+                                        0
+                                )
+                        );
+                    }
+                    break;
+                case WAVE:
+                    for (int i = 0; i < mCutCount; i += 1) {
+                        mPathsFull.add(
+                                Utils.getWavePath(
+                                        mWidth,
+                                        mHeight,
+                                        (mCutHeight - cutHeightIncrement * i) / 2,
+                                        0.1f,
+                                        0
+                                )
+                        );
+                    }
+                    break;
+                default:
+                    Log.e(TAG, "Unknown ImageCutType enum : " + mCutType + "\n"
+                            + "switching to default value : " + DEF_IMAGE_CUT_TYPE);
+                    mCutType = DEF_IMAGE_CUT_TYPE;
+                    preparePaths();
+            }
         }
     }
 
     private void prepareTints() {
+        Log.i(TAG, "prepareTint");
         if (mAutoTint) {
             pickColorFromBitmapAsync();
         }
@@ -427,23 +424,26 @@ public class GlazyImageView extends View {
     }
 
     private void prepareText() {
-        if (mTitleText != null && !mTitleText.trim().equals("")) {
-            float availableSpace = (mWidth - 2 * mTextMargin) * 0.75f;
-            mTitleText = TextUtils.ellipsize(
-                    mTitleText,
-                    mTitleTextPaint,
-                    availableSpace,
-                    TextUtils.TruncateAt.END
-            ).toString();
-        }
-        if (mSubTitleText != null && !mSubTitleText.trim().equals("")) {
-            float availableSpace = (mWidth - 2 * mTextMargin) * 0.5f;
-            mSubTitleText = TextUtils.ellipsize(
-                    mSubTitleText,
-                    mSubTitleTextPaint,
-                    availableSpace,
-                    TextUtils.TruncateAt.END
-            ).toString();
+        if (mWidth != 0 && mHeight != 0) {
+            Log.i(TAG, "prepareText" + mTitleText + mSubTitleText);
+            if (mTitleText != null && !mTitleText.trim().equals("")) {
+                float availableSpace = (mWidth - 2 * mTextMargin) * 0.9f;
+                mTitleText = TextUtils.ellipsize(
+                        mTitleText,
+                        mTitleTextPaint,
+                        availableSpace,
+                        TextUtils.TruncateAt.END
+                ).toString();
+            }
+            if (mSubTitleText != null && !mSubTitleText.trim().equals("")) {
+                float availableSpace = (mWidth - 2 * mTextMargin) * 0.5f;
+                mSubTitleText = TextUtils.ellipsize(
+                        mSubTitleText,
+                        mSubTitleTextPaint,
+                        availableSpace,
+                        TextUtils.TruncateAt.END
+                ).toString();
+            }
         }
     }
 
@@ -534,7 +534,9 @@ public class GlazyImageView extends View {
                     } else if (palette.getMutedColor(defaultColor) != 0) {
                         mTintColor = Math.abs(palette.getMutedColor(defaultColor));
                     } else {
-                        Log.i(TAG, "Could not pick color from bitmap, using default tint : " + "");
+                        Log.i(TAG, "Could not pick color from bitmap, using default tint : "
+                                + DEF_TINT_COLOR
+                        );
                     }
                 }
             });
@@ -555,7 +557,9 @@ public class GlazyImageView extends View {
             } else if (palette.getMutedColor(defaultColor) != 0) {
                 mTintColor = Math.abs(palette.getMutedColor(defaultColor));
             } else {
-                Log.i(TAG, "Could not pick color from bitmap, using default tint : " + "");
+                Log.i(TAG, "Could not pick color from bitmap, using default tint : "
+                        + DEF_TINT_COLOR
+                );
             }
         }
     }
@@ -588,10 +592,6 @@ public class GlazyImageView extends View {
         preparePaths();
         invalidate();
     }
-
-//    public void setCutPhaseShift(int phaseShift) {
-//        mCutPhaseShift = phaseShift;
-//    }
 
     public void setTintColor(int tintColor) {
         mTintColor = tintColor;

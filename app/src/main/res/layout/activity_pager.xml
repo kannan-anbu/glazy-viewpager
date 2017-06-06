@@ -36,7 +36,7 @@
         android:fontFamily="sans-serif-smallcaps"
         android:padding="10dp"
         android:layout_centerHorizontal="true"
-        android:text="\@ KANNAN-ANBU"
+        android:text="2017 © KANNAN-ANBU"
         android:textColor="#787878"
         android:textSize="15sp" />
 

@@ -44,6 +44,7 @@ public class GlazyCardFragment extends Fragment {
 
         TextView description = (TextView) v.findViewById(R.id.description_text);
         description.setText(card.getDescription());
+        description.setAlpha(0f);
 
         GlazyImageView imgView = (GlazyImageView) v.findViewById(R.id.glazy_image_view);
         imgView.setImageRes(card.getImageRes());

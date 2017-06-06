@@ -23,7 +23,7 @@
             glazy:tintAlpha="125"
             glazy:titleTextSize="25dp"
             glazy:subTitleTextSize="18dp"
-            glazy:textMargin="25dp"
+            glazy:textMargin="15dp"
             glazy:lineSpacing="10dp"
             />
         <!--<TextView-->
@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:orientation="vertical"
+        android:overScrollMode="never"
         android:padding="15dp"
         android:layout_weight="1">
 
@@ -76,6 +77,7 @@
                 android:textColor="#828282"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:textAlignment="center"
                 android:lineSpacingMultiplier="1"/>
 
         </LinearLayout>

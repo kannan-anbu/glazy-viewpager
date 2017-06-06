@@ -43,7 +43,7 @@ public class GlazyPagerTransformer implements ViewPager.PageTransformer {
 
         float position = posActual + posCorrection;
 
-        if(Math.abs(position) <= 1.1) {
+        if(Math.abs(position) <= 1.1f) {
 //            TextView tv = (TextView) page.findViewById(R.id.fragment_cardview_title);
 //            tv.setText("" + position);
 
@@ -53,18 +53,20 @@ public class GlazyPagerTransformer implements ViewPager.PageTransformer {
 //            String t = ((TextView) page.findViewById(R.id.title_text)).getText().toString();
             float f = 1.0f - Math.abs(position);
 //            Log.i("app", t +  f );
-            iv.setTitleText("" + posActual);
-            iv.setSubTitleText("" + position);
+//            iv.setTitleText("" + posActual);
+//            iv.setSubTitleText("" + position);
             iv.update(f);
 //            page.invalidate();
 
             TextView tv = (TextView) page.findViewById(R.id.description_text);
-            tv.setText("" + position + "\n" + posActual +
-                    "\n" + mScreenWidth + "\n" + page.getWidth()
-                    + "\n" + page.getX()
-            + "\n" + mPager.getPaddingLeft()
-            + "\n" + Utils.dpToPx(mContext, 40) + " " + posCorrection
-            + " " + mPager.getPaddingLeft() + " " + mPager.getPaddingRight());
+            tv.setAlpha(f);
+//            tv.invalidate();
+//            tv.setText("" + position + "\n" + posActual +
+//                    "\n" + mScreenWidth + "\n" + page.getWidth()
+//                    + "\n" + page.getX()
+//            + "\n" + mPager.getPaddingLeft()
+//            + "\n" + Utils.dpToPx(mContext, 40) + " " + posCorrection
+//            + " " + mPager.getPaddingLeft() + " " + mPager.getPaddingRight());
 // tv.setPadding(50, 50, 50, (int) (iv.getHeight() * position));
         }
         switch (mTransformType) {
