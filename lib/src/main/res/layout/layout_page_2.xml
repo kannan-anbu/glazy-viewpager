@@ -1,46 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:glazy="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="2">
 
-    <RelativeLayout
+    <com.kannan.glazy.views.GlazyImageView
+        android:id="@+id/glazy_image_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <com.kannan.glazy.views.GlazyImageView
-            android:id="@+id/glazy_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            glazy:cutType="wave"
-            glazy:cutHeight="50dp"
-            glazy:cutCount="3"
-            glazy:autoTint="false"
-            glazy:tintColor="#ff000000"
-            glazy:tintAlpha="125"
-            glazy:titleTextSize="25dp"
-            glazy:subTitleTextSize="18dp"
-            glazy:textMargin="15dp"
-            glazy:lineSpacing="10dp"
-            />
-        <!--<TextView-->
-            <!--android:id="@+id/title_text"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:fontFamily="sans-serif-smallcaps"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="20sp"-->
-            <!--android:ellipsize="marquee"-->
-            <!--android:maxLines="2"-->
-            <!--android:textStyle="bold"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_marginBottom="15dp"-->
-            <!--/>-->
-    </RelativeLayout>
+        android:layout_weight="1"
+        />
 
     <ScrollView
         android:id="@+id/text_container"
@@ -51,36 +21,17 @@
         android:padding="15dp"
         android:layout_weight="1">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/description_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:fontFamily="sans-serif-smallcaps"
+            android:textColor="#828282"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:textAlignment="center"
+            android:lineSpacingMultiplier="1"/>
 
-            <!--<TextView-->
-                <!--android:id="@+id/title_text"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:fontFamily="sans-serif-smallcaps"-->
-                <!--android:textColor="#626262"-->
-                <!--android:textSize="20sp"-->
-                <!--android:ellipsize="marquee"-->
-                <!--android:maxLines="2"-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_marginBottom="5dp"-->
-                <!--/>-->
-
-            <TextView
-                android:id="@+id/description_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-smallcaps"
-                android:textColor="#828282"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:lineSpacingMultiplier="1"/>
-
-        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

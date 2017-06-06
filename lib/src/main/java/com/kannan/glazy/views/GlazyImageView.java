@@ -31,28 +31,29 @@ public class GlazyImageView extends View {
 
     private String TAG = "app"; //GlazyImageView.class.getSimpleName();
 
-    private final int           DEF_IMAGE_RES               = -1;
-    private final String        DEF_TITLE_TEXT              = "";
-    private final int           DEF_TITLE_TEXT_COLOR        = Color.WHITE;
-    private final int           DEF_TITLE_TEXT_SIZE_DP      = 20;
-    private final String        DEF_SUB_TITLE_TEXT          = "";
-    private final int           DEF_SUB_TITLE_TEXT_COLOR    = Color.GRAY;
-    private final int           DEF_SUB_TITLE_TEXT_SIZE_DP  = 10;
-    private final int           DEF_TEXT_MARGIN_DP          = 10;
-    private final int           DEF_LINE_SPACING_DP         = DEF_SUB_TITLE_TEXT_SIZE_DP;
-    private final int           DEF_TINT_COLOR              = Color.BLACK;
-    private final int           DEF_TINT_ALPHA              = 125;
-    private final ImageCutType  DEF_IMAGE_CUT_TYPE          = ImageCutType.WAVE;
-    private final int           DEF_CUT_COUNT               = 3;
-    private final int           DEF_CUT_HEIGHT              = 0;
-    private final float         DEF_OPEN_FACTOR             = 1.0f;
+    public static final int           DEF_IMAGE_RES               = -1;
+    public static final String        DEF_TITLE_TEXT              = "";
+    public static final int           DEF_TITLE_TEXT_COLOR        = Color.WHITE;
+    public static final int           DEF_TITLE_TEXT_SIZE_DP      = 22;
+    public static final String        DEF_SUB_TITLE_TEXT          = "";
+    public static final int           DEF_SUB_TITLE_TEXT_COLOR    = Color.GRAY;
+    public static final int           DEF_SUB_TITLE_TEXT_SIZE_DP  = 15;
+    public static final int           DEF_TEXT_MARGIN_DP          = 15;
+    public static final int           DEF_LINE_SPACING_DP         = DEF_SUB_TITLE_TEXT_SIZE_DP / 2;
+    public static final boolean       DEF_AUTO_TINT_MODE          = false;
+    public static final int           DEF_TINT_COLOR              = Color.BLACK;
+    public static final int           DEF_TINT_ALPHA              = 125;
+    public static final ImageCutType  DEF_IMAGE_CUT_TYPE          = ImageCutType.WAVE;
+    public static final int           DEF_CUT_COUNT               = 3;
+    public static final int           DEF_CUT_HEIGHT              = 0;
+    public static final float         DEF_OPEN_FACTOR             = 1.0f;
 
     private Context mContext;
 
     private float mHeight;
     private float mWidth;
 
-    private int mImageRes = -1;
+    private int mImageRes;
     private Bitmap mImageBitmap;
     private Paint mBitmapPaint;
     private RectF mBitmapScaleRectOriginal;
@@ -253,17 +254,16 @@ public class GlazyImageView extends View {
         mTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTitleTextPaint.setTextSize(mTitleTextSize);
         mTitleTextPaint.setTextAlign(Paint.Align.LEFT);
-        mTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.BOLD));
+        mTitleTextPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
         mTitleTextPaint.setStyle(Paint.Style.FILL);
         mTitleTextPaint.setColor(mTitleTextColor);
 
         mSubTitleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
         mSubTitleTextPaint.setTextAlign(Paint.Align.LEFT);
-        mSubTitleTextPaint.setTypeface(Typeface.create("Helvetica", Typeface.NORMAL));
+        mSubTitleTextPaint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL));
         mSubTitleTextPaint.setStyle(Paint.Style.FILL);
         mSubTitleTextPaint.setColor(mSubTitleTextColor);
-
 
         mBitmapScaleRectOriginal = new RectF();
         mPathsFull = new ArrayList<>();
@@ -275,18 +275,10 @@ public class GlazyImageView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.i(TAG, "onMeasure");
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
-
-        Log.i(TAG, "onMeasure");
         prepareDrawingElements();
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        Log.i(TAG, "layout");
-//        update(mOpenFactor);
     }
 
     @Override
@@ -316,7 +308,7 @@ public class GlazyImageView extends View {
     }
 
     public void update(float factor) {
-//        Log.i(TAG, "update");
+        Log.i(TAG, "update");
         mOpenFactor = factor;
         mScaleMatrix.setScale(1f, factor);
         mPathsScaled.clear();
@@ -337,13 +329,11 @@ public class GlazyImageView extends View {
 
         mSubTitleTextX = mTextMargin;
         mSubTitleTextY = (int) (bound.height() -
-                (mCutHeight * 0.7)); //mOpenFactor + mSubTitleTextSize));
-
+                (mCutHeight * 0.7));
         mTitleTextX = mTextMargin;
-        mTitleTextY = (int) (mSubTitleTextY - 1.2 * mSubTitleTextSize);
-//        mTitleTextY = (int) (bound.height() - ((bound.height() / 5) * (1 )));
+        mTitleTextY = (mSubTitleTextY - (mSubTitleTextSize + mLineSpacing));
 
-        postInvalidate();
+        invalidate();
     }
 
     private void prepareDrawingElements() {
@@ -356,7 +346,7 @@ public class GlazyImageView extends View {
     }
 
     private void preparePaths() {
-        Log.i(TAG, "preparePaths" + mWidth + " " + mHeight + " " + mOpenFactor);
+//        Log.i(TAG, "preparePaths" + mWidth + " " + mHeight + " " + mOpenFactor);
         if (mWidth != 0 && mHeight != 0) {
             mPathsFull.clear();
             float cutHeightIncrement = mCutHeight / ((float) 1.5 * mCutCount);
@@ -461,7 +451,9 @@ public class GlazyImageView extends View {
                 return;
             }
 
-//            prepare scaleRect for drawing bitmap
+            /*
+             * prepare scaleRect for drawing bitmap
+             */
             float scaleRatio = 1;
             if (mWidth != mImageBitmap.getWidth()) {
                 scaleRatio = mWidth / mImageBitmap.getWidth();
@@ -564,6 +556,11 @@ public class GlazyImageView extends View {
         }
     }
 
+
+    /*
+     * Setters:
+     */
+
     public void setImageRes(int imgRes) {
         mImageRes = imgRes;
         prepareBitmap();
@@ -571,13 +568,117 @@ public class GlazyImageView extends View {
         invalidate();
     }
 
+    public void setTitleText(String title) {
+        if (mTitleText.equals(title))
+            return;
+
+        mTitleText = title;
+        prepareText();
+        invalidate();
+    }
+
+    public void setTitleTextColor(int color) {
+        if (mTitleTextColor == color)
+            return;
+
+        mTitleTextColor = color;
+        mTitleTextPaint.setColor(mTitleTextColor);
+        invalidate();
+    }
+
+    public void setTitleTextSize(int size) {
+        if (mTitleTextSize == size)
+            return;
+
+        mTitleTextSize = size;
+        mTitleTextPaint.setTextSize(mTitleTextSize);
+        invalidate();
+    }
+
+    public void setSubTitleText(String title) {
+        if (mSubTitleText.equals(title))
+            return;
+
+        mSubTitleText = title;
+        prepareText();
+        invalidate();
+    }
+
+    public void setSubTitleTextColor(int color) {
+        if (mSubTitleTextColor == color)
+            return;
+
+        mSubTitleTextColor = color;
+        mSubTitleTextPaint.setColor(mSubTitleTextColor);
+        invalidate();
+    }
+
+    public void setSubTitleTextSize(int size) {
+        if (mSubTitleTextSize == size)
+            return;
+
+        mSubTitleTextSize = size;
+        mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
+        invalidate();
+    }
+
+    public void setTextMargin(int textMargin) {
+        if (mTextMargin == textMargin)
+            return;
+
+        mTextMargin = textMargin;
+        update(mOpenFactor);
+    }
+
+    public void setLineSpacing(int spacing) {
+        if(mLineSpacing == spacing)
+            return;
+
+        mLineSpacing = spacing;
+        update(mOpenFactor);
+    }
+
+    public void setAutoTint(boolean flag) {
+        if (mAutoTint == flag)
+            return;
+
+        mAutoTint = flag;
+        prepareTints();
+        invalidate();
+    }
+
+    public void setTintColor(int tintColor) {
+        if (mTintColor == tintColor)
+            return;
+
+        mTintColor = tintColor;
+        mAutoTint = false;
+        prepareTints();
+        invalidate();
+    }
+
+    public void setTintAlpha(int alpha) {
+        if (mTintAlpha == alpha)
+            return;
+
+        mTintAlpha = alpha;
+        prepareTints();
+        invalidate();
+    }
+
     public void setCutType(ImageCutType cutType) {
+        if (mCutType == cutType)
+            return;
+
         mCutType = cutType;
         preparePaths();
         invalidate();
     }
 
     public void setCutCount(int count) {
+        if (mCutCount == count)
+            return;
+
         count = Math.abs(count);
         if (count <= 0) count = 0;
         if (count > 4)  count = 4;
@@ -588,52 +689,89 @@ public class GlazyImageView extends View {
     }
 
     public void setCutHeight(int height) {
+        if (mCutHeight == height)
+            return;
+
         mCutHeight = height;
         preparePaths();
         invalidate();
     }
 
-    public void setTintColor(int tintColor) {
-        mTintColor = tintColor;
-        mAutoTint = false;
-        prepareTints();
-        invalidate();
+    /*
+     * Getters:
+     */
+
+
+    public int getImageRes() {
+        return mImageRes;
     }
 
-    public void setTitleText(String title) {
-        mTitleText = title;
-        prepareText();
-        invalidate();
+    public Bitmap getImageBitmap() {
+        return mImageBitmap;
     }
 
-    public void setTitleTextColor(int color) {
-        mTitleTextColor = color;
-        mTitleTextPaint.setColor(mTitleTextColor);
-        invalidate();
+    public String getTitleText() {
+        return mTitleText;
     }
 
-    public void setTitleTextSize(int size) {
-        mTitleTextSize = size;
-        mTitleTextPaint.setTextSize(mTitleTextSize);
-        invalidate();
+    public int getTitleTextColor() {
+        return mTitleTextColor;
     }
 
-    public void setSubTitleText(String title) {
-        mSubTitleText = title;
-        prepareText();
-        invalidate();
+    public int getTitleTextSize() {
+        return mTitleTextSize;
     }
 
-    public void setSubTitleTextColor(int color) {
-        mSubTitleTextColor = color;
-        mSubTitleTextPaint.setColor(mSubTitleTextColor);
-        invalidate();
+    public String getSubTitleText() {
+        return mSubTitleText;
     }
 
-    public void setSubTitleTextSize(int size) {
-        mSubTitleTextSize = size;
-        mSubTitleTextPaint.setTextSize(mSubTitleTextSize);
-        invalidate();
+    public int getSubTitleTextColor() {
+        return mSubTitleTextColor;
+    }
+
+    public int getSubTitleTextSize() {
+        return mSubTitleTextSize;
+    }
+
+    public int getTextMargin() {
+        return mTextMargin;
+    }
+
+    public int getLineSpacing() {
+        return mLineSpacing;
+    }
+
+    public boolean isAutoTint() {
+        return mAutoTint;
+    }
+
+    public int getTintColor() {
+        return mTintColor;
+    }
+
+    public int getTintAlpha() {
+        return mTintAlpha;
+    }
+
+    public Paint getTintPaint() {
+        return mTintPaint;
+    }
+
+    public ImageCutType getCutType() {
+        return mCutType;
+    }
+
+    public int getCutCount() {
+        return mCutCount;
+    }
+
+    public int getCutHeight() {
+        return mCutHeight;
+    }
+
+    public float getOpenFactor() {
+        return mOpenFactor;
     }
 
 }

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:fontFamily="sans-serif-smallcaps"
-        android:padding="15dp"
+        android:padding="20dp"
         android:layout_centerHorizontal="true"
         android:text="GLAZY-VIEWPAGER"
         android:textColor="#ffffff"

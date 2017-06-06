@@ -2,42 +2,77 @@ package com.kannan.glazy;
 
 import android.graphics.Color;
 
-import com.kannan.glazy.views.GlazyImageView.ImageCutType;
-
 import java.io.Serializable;
+
+import static com.kannan.glazy.views.GlazyImageView.DEF_AUTO_TINT_MODE;
+import static com.kannan.glazy.views.GlazyImageView.DEF_CUT_COUNT;
+import static com.kannan.glazy.views.GlazyImageView.DEF_CUT_HEIGHT;
+import static com.kannan.glazy.views.GlazyImageView.DEF_IMAGE_CUT_TYPE;
+import static com.kannan.glazy.views.GlazyImageView.DEF_IMAGE_RES;
+import static com.kannan.glazy.views.GlazyImageView.DEF_LINE_SPACING_DP;
+import static com.kannan.glazy.views.GlazyImageView.DEF_SUB_TITLE_TEXT;
+import static com.kannan.glazy.views.GlazyImageView.DEF_SUB_TITLE_TEXT_COLOR;
+import static com.kannan.glazy.views.GlazyImageView.DEF_SUB_TITLE_TEXT_SIZE_DP;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TEXT_MARGIN_DP;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TINT_ALPHA;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TINT_COLOR;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TITLE_TEXT;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TITLE_TEXT_COLOR;
+import static com.kannan.glazy.views.GlazyImageView.DEF_TITLE_TEXT_SIZE_DP;
+import static com.kannan.glazy.views.GlazyImageView.ImageCutType;
 
 public class GlazyCard implements Serializable{
 
-    private String mTitle;
-    private String mSubTitle;
-    private String mDescription;
     private int mImageRes;
 
-    private ImageCutType mImageCutType;
-//    private int mImageCutAngle;
-    private int mImageCutCount;
-    private int mImageCutHeight;
-    private int mImageCutPhaseShift;
+    private String mDescription;
+
+    private String mTitle;
+    private int mTitleColor;
+    private int mTitleSizeDP;
+
+    private String mSubTitle;
+    private int mSubTitleColor;
+    private int mSubTitleSizeDP;
+
+    private int mTextMarginDP;
+    private int mLineSpacingDP;
 
     private boolean mAutoTint;
     private int mTintColor;
     private int mTintAlpha;
+
+    private ImageCutType mImageCutType;
+    private int mImageCutCount;
+    private int mImageCutHeightDP;
+
     private int mBackgroundColor;
 
-    private boolean mHasImageSource;
-
     public GlazyCard() {
-        mTitle = "TITLE";
-        mSubTitle = "SUB TITLE";
-        mDescription = "jfhkjuh fgfuhkjh fuyhkhk ksfhghkfhgkfjh ";
-        mImageCutType = ImageCutType.LINE_POSITIVE;
-//        mImageCutAngle = 20;
-        mImageCutCount = 2;
-        mImageCutHeight = 0;
-        mImageCutPhaseShift = 0;
-        mAutoTint = true;
-        mBackgroundColor = Color.parseColor("#fff1f1f1");
-        mHasImageSource = false;
+
+        mImageRes = DEF_IMAGE_RES;
+        mDescription = "";
+
+        mTitle = DEF_TITLE_TEXT;
+        mTitleColor = DEF_TITLE_TEXT_COLOR;
+        mTitleSizeDP = DEF_TITLE_TEXT_SIZE_DP;
+
+        mSubTitle = DEF_SUB_TITLE_TEXT;
+        mSubTitleColor = DEF_SUB_TITLE_TEXT_COLOR;
+        mSubTitleSizeDP = DEF_SUB_TITLE_TEXT_SIZE_DP;
+
+        mTextMarginDP = DEF_TEXT_MARGIN_DP;
+        mLineSpacingDP = DEF_LINE_SPACING_DP;
+
+        mAutoTint = DEF_AUTO_TINT_MODE;
+        mTintColor = DEF_TINT_COLOR;
+        mTintAlpha = DEF_TINT_ALPHA;
+
+        mImageCutType = DEF_IMAGE_CUT_TYPE;
+        mImageCutCount = DEF_CUT_COUNT;
+        mImageCutHeightDP = DEF_CUT_HEIGHT;
+
+        mBackgroundColor = Color.parseColor("#FFF1F1F1");
     }
 
     public GlazyCard(String title, String description, int imageRes) {
@@ -47,13 +82,12 @@ public class GlazyCard implements Serializable{
         mImageRes = imageRes;
     }
 
-    public GlazyCard withTitle(String title) {
-        mTitle = title;
-        return this;
-    }
+    /*
+     * Setters:
+     */
 
-    public GlazyCard withSubTitle(String subTitle) {
-        mSubTitle = subTitle;
+    public GlazyCard withImageRes(int imgRes) {
+        mImageRes = imgRes;
         return this;
     }
 
@@ -62,46 +96,51 @@ public class GlazyCard implements Serializable{
         return this;
     }
 
-    public GlazyCard withImageRes(int imgRes) {
-        mImageRes = imgRes;
-        mHasImageSource = true;
+    public GlazyCard withTitle(String title) {
+        mTitle = title;
         return this;
     }
 
-//    public GlazyCard withCoverHeight_px (int coverHeight_px) {
-//        mCoverHeight_px = coverHeight_px;
-//        return this;
-//    }
+    public GlazyCard withTitleColor(int color) {
+        mTitleColor = color;
+        return this;
+    }
 
-//    public GlazyCard withCoverHeight_dp (int coverHeight_dp) {
-//        mCoverHeight_dp = coverHeight_dp;
-//        return this;
-//    }
+    public GlazyCard withTitleSizeDP(int size)
+    {
+        mTitleSizeDP = size;
+        return this;
+    }
 
-//    public GlazyCard withSlopeHeight_px (int slopeHeight_px) {
-//        mSlopeHeight_px = slopeHeight_px;
-//        return this;
-//    }
+    public GlazyCard withSubTitle(String subTitle) {
+        mSubTitle = subTitle;
+        return this;
+    }
 
-//    public GlazyCard withSlopeHeight_dp (int slopeHeight_dp) {
-//        mSlopeHeight_dp = slopeHeight_dp;
-//        return this;
-//    }
+    public GlazyCard withSubTitleColor(int color) {
+        mSubTitleColor = color;
+        return this;
+    }
 
-//    public GlazyCard withSlopeDirection (SlopeDirection direction) {
-//        mSlopeDirection = direction;
-//        return this;
-//    }
+    public GlazyCard withSubTitleSizeDP(int size) {
+        mSubTitleSizeDP = size;
+        return this;
+    }
 
-//    public GlazyCard withAutoTint () {
-//        mAutoTint = true;
-//        return this;
-//    }
-//
-//    public GlazyCard withoutAutoTint () {
-//        mAutoTint = false;
-//        return this;
-//    }
+    public GlazyCard withTextMarginDP(int margin) {
+        mTextMarginDP = margin;
+        return this;
+    }
+
+    public GlazyCard withLineSpacingDP(int spacing) {
+        mLineSpacingDP = spacing;
+        return this;
+    }
+
+    public GlazyCard withAutoTint () {
+        mAutoTint = true;
+        return this;
+    }
 
     public GlazyCard withTintColor (int color) {
         mTintColor = color;
@@ -119,23 +158,13 @@ public class GlazyCard implements Serializable{
         return this;
     }
 
-//    public GlazyCard withImageCutAngle(int angle) {
-//        mImageCutAngle = angle;
-//        return this;
-//    }
-
     public GlazyCard withImageCutCount(int count) {
         mImageCutCount = count;
         return this;
     }
 
-    public GlazyCard withImageCutHeight(int height) {
-        mImageCutHeight = height;
-        return this;
-    }
-
-    public GlazyCard withImageCutPhaseShift(int phaseShift) {
-        mImageCutPhaseShift = phaseShift;
+    public GlazyCard withImageCutHeightDP(int height) {
+        mImageCutHeightDP = height;
         return this;
     }
 
@@ -143,6 +172,10 @@ public class GlazyCard implements Serializable{
         mBackgroundColor = bgColor;
         return this;
     }
+
+    /*
+     * Getters:
+     */
 
     public int getImageRes() {
         return mImageRes;
@@ -156,21 +189,33 @@ public class GlazyCard implements Serializable{
         return mTitle;
     }
 
+    public int getTitleColor() {
+        return mTitleColor;
+    }
+
+    public int getTitleSizeDP() {
+        return mTitleSizeDP;
+    }
+
     public String getSubTitle() {
         return mSubTitle;
     }
 
-//    public int getCoverHeight_dp() {
-//        return mCoverHeight_dp;
-//    }
-//
-//    public int getSlopeHeight_dp() {
-//        return mSlopeHeight_dp;
-//    }
+    public int getSubTitleColor() {
+        return mSubTitleColor;
+    }
 
-//    public SlopeDirection getSlopeDirection() {
-//        return mSlopeDirection;
-//    }
+    public int getSubTitleSizeDP() {
+        return mSubTitleSizeDP;
+    }
+
+    public int getTextmatginDP() {
+        return mTextMarginDP;
+    }
+
+    public int getLineSpacingDP() {
+        return mLineSpacingDP;
+    }
 
     public boolean isAutoTint() {
         return mAutoTint;
@@ -188,24 +233,12 @@ public class GlazyCard implements Serializable{
         return mImageCutType;
     }
 
-//    public int getImageCutAngle() {
-//        return mImageCutAngle;
-//    }
-
     public int getImageCutCount() {
         return mImageCutCount;
     }
 
-    public int getImageCutHeight() {
-        return mImageCutHeight;
-    }
-
-    public int getImageCutPhaseShift() {
-        return mImageCutPhaseShift;
-    }
-
-    public boolean hasImageSource() {
-        return mHasImageSource;
+    public int getImageCutHeightDP() {
+        return mImageCutHeightDP;
     }
 
     public int getBackgroundColor() {

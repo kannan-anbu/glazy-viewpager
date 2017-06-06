@@ -27,28 +27,9 @@ public class GlazyViewPager extends ViewPager {
 
     public void init(Context context, AttributeSet attrs) {
         mContext = context;
-        setOnPageChangeListener(
-                new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-//                        if (state != ViewPager.SCROLL_STATE_IDLE) {
-//                            final int childCount = getChildCount();
-//                            for (int i = 0; i < childCount; i++)
-//                                getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
-//                        }
-                    }
-                }
-        );
+        setOffscreenPageLimit(2);
+        setClipToPadding(false);
     }
 
     @Override
@@ -62,7 +43,6 @@ public class GlazyViewPager extends ViewPager {
     public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
         if (transformer instanceof GlazyPagerTransformer) {
             ((GlazyPagerTransformer) transformer).attachedPager(this);
-            ((GlazyPagerTransformer) transformer).setContext(mContext);
             super.setPageTransformer(reverseDrawingOrder, transformer, LAYER_TYPE_NONE);
         }
     }
@@ -71,7 +51,6 @@ public class GlazyViewPager extends ViewPager {
     public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer, int pageLayerType) {
         if (transformer instanceof GlazyPagerTransformer) {
             ((GlazyPagerTransformer) transformer).attachedPager(this);
-            ((GlazyPagerTransformer) transformer).setContext(mContext);
             super.setPageTransformer(reverseDrawingOrder, transformer, LAYER_TYPE_NONE);
         }
     }

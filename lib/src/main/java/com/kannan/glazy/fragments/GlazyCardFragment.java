@@ -1,20 +1,22 @@
 package com.kannan.glazy.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.kannan.glazy.GlazyCard;
 import com.kannan.glazy.R;
+import com.kannan.glazy.Utils;
 import com.kannan.glazy.views.GlazyImageView;
 
 public class GlazyCardFragment extends Fragment {
 
+    private Context mContext;
     private GlazyCard card;
 
     public static GlazyCardFragment newInstance(GlazyCard card) {
@@ -29,6 +31,7 @@ public class GlazyCardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         card = (GlazyCard) getArguments().getSerializable("glazy_card");
+        mContext = getContext();
     }
 
     @Nullable
@@ -39,33 +42,26 @@ public class GlazyCardFragment extends Fragment {
         View v =  inflater.inflate(R.layout.layout_page_2, container, false);
         v.setBackgroundColor(card.getBackgroundColor());
 
-//        TextView title = (TextView) v.findViewById(R.id.title_text);
-//        title.setText(card.getTitle());
-
         TextView description = (TextView) v.findViewById(R.id.description_text);
         description.setText(card.getDescription());
         description.setAlpha(0f);
 
         GlazyImageView imgView = (GlazyImageView) v.findViewById(R.id.glazy_image_view);
         imgView.setImageRes(card.getImageRes());
-//        imgView.setBackgroundColor(card.getBackgroundColor());
-        imgView.setCutType(card.getImageCutType());
-//        imgView.setCutAngle(card.getImageCutAngle());
-        imgView.setCutCount(card.getImageCutCount());
-        imgView.setCutHeight(card.getImageCutHeight());
         imgView.setTitleText(card.getTitle());
+        imgView.setTitleTextColor(card.getTitleColor());
+        imgView.setTitleTextSize(Utils.dpToPx(mContext, card.getTitleSizeDP()));
         imgView.setSubTitleText(card.getSubTitle());
-//        v.setBackgroundColor(card.getBackgroundColor());
-
-        ScrollView textContainer = (ScrollView) v.findViewById(R.id.text_container);
-//        textContainer.setBackgroundColor(card.getBackgroundColor());
-//        Log.i("app", "scroll view hight" + Utils.getPixelForDp(getContext(), card.getCoverHeight_dp()));
-//        textContainer.setLayoutParams(
-//                new RelativeLayout.LayoutParams(
-//                        RelativeLayout.LayoutParams.MATCH_PARENT,
-//                        Utils.getPixelForDp(getContext(), card.getCoverHeight_dp())
-//                )
-//        );
+        imgView.setSubTitleTextColor(card.getSubTitleColor());
+        imgView.setSubTitleTextSize(Utils.dpToPx(mContext, card.getSubTitleSizeDP()));
+        imgView.setTextMargin(Utils.dpToPx(mContext, card.getTextmatginDP()));
+        imgView.setLineSpacing(Utils.dpToPx(mContext, card.getLineSpacingDP()));
+        imgView.setAutoTint(card.isAutoTint());
+        imgView.setTintColor(card.getTintColor());
+        imgView.setTintAlpha(card.getTintAlpha());
+        imgView.setCutType(card.getImageCutType());
+        imgView.setCutCount(card.getImageCutCount());
+        imgView.setCutHeight(Utils.dpToPx(mContext,card.getImageCutHeightDP()));
 
         return v;
     }
