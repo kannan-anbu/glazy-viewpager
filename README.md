@@ -4,7 +4,7 @@ ViewPager template with cool animation.
 
 ### Preview
 
-[![Video](https://github.com/kannan-anbu/glazy-viewpager/blob/master/app/src/main/res/drawable-nodpi/sample_gif.gif)]
+![Video](https://github.com/kannan-anbu/glazy-viewpager/blob/master/app/src/main/res/drawable-nodpi/sample_gif.gif)
 
 
 ### Dependencies
@@ -20,6 +20,26 @@ compile 'com.android.support:palette-v7:25.2.0'
         android:layout_height="wrap_content">
     </com.kannan.glazy.pager.GlazyViewPager>
 ```
+
+## GlazyImageView
+You can even use the GlazyImageView alone.
+
+```xml
+    <com.kannan.glazy.views.GlazyImageView
+        android:id="@+id/glazy_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        glazy:cutType="wave"
+        glazy:cutHeight="50dp"
+        glazy:cutCount="3"
+        glazy:autoTint="false"
+        glazy:tintColor="#ff000000"
+        glazy:tintAlpha="125"
+        glazy:titleTextSize="25dp"
+        glazy:subTitleTextSize="18dp"
+        glazy:textMargin="25dp"
+        glazy:lineSpacing="10dp"
+    />
 
 License
 --------
