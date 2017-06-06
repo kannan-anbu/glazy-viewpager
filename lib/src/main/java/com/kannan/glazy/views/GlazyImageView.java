@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class GlazyImageView extends View {
 
-    private String TAG = "app"; //GlazyImageView.class.getSimpleName();
+    private String TAG = GlazyImageView.class.getSimpleName();
 
     public static final int           DEF_IMAGE_RES               = -1;
     public static final String        DEF_TITLE_TEXT              = "";
@@ -275,7 +275,7 @@ public class GlazyImageView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.i(TAG, "onMeasure");
+//        Log.i(TAG, "onMeasure");
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
         prepareDrawingElements();
@@ -283,7 +283,7 @@ public class GlazyImageView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.i(TAG, "onDraw");
+//        Log.i(TAG, "onDraw");
         super.onDraw(canvas);
         if (mImageRes != -1 && mImageBitmap != null) {
             mTintPaint.setAlpha(mTintAlpha);
@@ -308,7 +308,7 @@ public class GlazyImageView extends View {
     }
 
     public void update(float factor) {
-        Log.i(TAG, "update");
+//        Log.i(TAG, "update");
         mOpenFactor = factor;
         mScaleMatrix.setScale(1f, factor);
         mPathsScaled.clear();
@@ -401,7 +401,7 @@ public class GlazyImageView extends View {
     }
 
     private void prepareTints() {
-        Log.i(TAG, "prepareTint");
+//        Log.i(TAG, "prepareTint");
         if (mAutoTint) {
             pickColorFromBitmapAsync();
         }
@@ -415,7 +415,7 @@ public class GlazyImageView extends View {
 
     private void prepareText() {
         if (mWidth != 0 && mHeight != 0) {
-            Log.i(TAG, "prepareText" + mTitleText + mSubTitleText);
+//            Log.i(TAG, "prepareText" + mTitleText + mSubTitleText);
             if (mTitleText != null && !mTitleText.trim().equals("")) {
                 float availableSpace = (mWidth - 2 * mTextMargin) * 0.9f;
                 mTitleText = TextUtils.ellipsize(
@@ -438,7 +438,7 @@ public class GlazyImageView extends View {
     }
 
     private void prepareBitmap() {
-        Log.i(TAG, "prepare bitmap");
+//        Log.i(TAG, "prepare bitmap");
         if (mImageRes != -1 && mWidth != 0 && mHeight != 0) {
             try {
                 mImageBitmap = decodeSampledBitmapFromResource(mContext.getResources(), mImageRes, mWidth, mHeight);
@@ -447,6 +447,7 @@ public class GlazyImageView extends View {
                 Log.e(TAG, "Image too large to load: \n" + e.getMessage());
                 return;
             } catch(Exception e) {
+                mImageBitmap = null;
                 Log.e(TAG, "Could not load bitmap image : \n" + e.getMessage());
                 return;
             }

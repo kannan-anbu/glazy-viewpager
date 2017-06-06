@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#cc000000">
+    android:background="@drawable/gradient_bg">
 
     <TextView
         android:id="@+id/title"
@@ -37,7 +37,7 @@
         android:padding="10dp"
         android:layout_centerHorizontal="true"
         android:text="2017 © KANNAN-ANBU"
-        android:textColor="#787878"
+        android:textColor="#ffffff"
         android:textSize="15sp" />
 
 

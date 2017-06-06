@@ -38,8 +38,8 @@ public class PagerActivity extends AppCompatActivity {
         int img_matthew = resources.getIdentifier("matthew_perry", "drawable", getPackageName());
 
         String desc_jenif = "Jennifer Joanna Aniston (born February 11, 1969) is an American" +
-                " actress, producer, and businesswoman.Aniston gained worldwide recognition" +
-                " for portraying Rachel Green on the popular television sitcom Friends, " +
+                " actress, producer, and businesswoman. Aniston gained worldwide recognition" +
+                " for portraying Rachel Green on the popular television sitcom Friends," +
                 " a role which earned her a Primetime Emmy Award, a Golden Globe Award, and a" +
                 " Screen Actors Guild Award.";
 

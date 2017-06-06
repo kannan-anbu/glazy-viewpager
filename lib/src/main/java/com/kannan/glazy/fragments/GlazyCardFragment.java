@@ -39,7 +39,7 @@ public class GlazyCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View v =  inflater.inflate(R.layout.layout_page_2, container, false);
+        View v =  inflater.inflate(R.layout.layout_page, container, false);
         v.setBackgroundColor(card.getBackgroundColor());
 
         TextView description = (TextView) v.findViewById(R.id.description_text);
