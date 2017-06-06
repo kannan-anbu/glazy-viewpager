@@ -13,7 +13,7 @@ compile 'com.android.support:palette-v7:25.2.0'
 ```
 
 ### Usage
-    Refer [sample implementation](https://github.com/kannan-anbu/glazy-viewpager/blob/master/app/src/main/java/com/kannan/glazysample/PagerActivity.java)
+    Refer the implementation in the sample app.
 ```xml
     <com.kannan.glazy.pager.GlazyViewPager
         android:layout_width="match_parent"
