@@ -1,4 +1,5 @@
 # glazy-viewpager
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Glazy%20ViewPager-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5856)
 
 ViewPager template with cool animation.
 
